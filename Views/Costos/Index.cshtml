@@ -1,0 +1,50 @@
+@model IReadOnlyList<Turismo.Domain.Entities.Costo>
+
+@{
+    ViewData["Title"] = "Costos";
+}
+
+<div class="page-card mb-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+    <div>
+        <span class="soft-badge mb-2">Administración</span>
+        <h1 class="section-title mb-2">Costos</h1>
+        <p class="page-muted mb-0">Registra y consulta valores asociados a cada sitio turístico.</p>
+    </div>
+    <a class="btn btn-primary" asp-action="Create">Nuevo costo</a>
+</div>
+
+<div class="table-card">
+    @if (!Model.Any())
+    {
+        <div class="empty-state">Todavía no hay costos registrados.</div>
+    }
+    else
+    {
+        <table class="table table-striped table-friendly mb-0">
+            <thead>
+                <tr>
+                    <th>Sitio</th>
+                    <th>Actividad / concepto</th>
+                    <th>Valor</th>
+                    <th>Moneda</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var costo in Model)
+            {
+                <tr>
+                    <td class="fw-semibold">@ViewBag.SitioNombres?[costo.SitioId]?.ToString() ?? "Desconocido"</td>
+                    <td>@costo.Tipo</td>
+                    <td>@costo.Valor</td>
+                    <td><span class="soft-badge">@costo.Moneda</span></td>
+                    <td class="text-nowrap">
+                        <a asp-action="Edit" asp-route-id="@costo.Id">Editar</a> |
+                        <a asp-action="Delete" asp-route-id="@costo.Id">Eliminar</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+</div>

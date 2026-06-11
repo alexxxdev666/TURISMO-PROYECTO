@@ -1,0 +1,51 @@
+@model IReadOnlyList<Turismo.Domain.Entities.Sitio>
+
+@{
+    ViewData["Title"] = "Sitios";
+}
+
+<div class="page-card mb-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+    <div>
+        <span class="soft-badge mb-2">Catálogo principal</span>
+        <h1 class="section-title mb-2">Sitios turísticos</h1>
+        <p class="page-muted mb-0">Administra los lugares turísticos con información clara y de fácil acceso.</p>
+    </div>
+    <a class="btn btn-primary" asp-action="Create">Nuevo sitio</a>
+</div>
+
+<div class="table-card">
+    @if (!Model.Any())
+    {
+        <div class="empty-state">Aún no hay sitios registrados. Crea el primero para comenzar.</div>
+    }
+    else
+    {
+        <table class="table table-striped table-friendly mb-0">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Estado</th>
+                    <th>Fecha creación</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var sitio in Model)
+            {
+                <tr>
+                    <td class="fw-semibold">@sitio.Nombre</td>
+                    <td><span class="soft-badge">@sitio.Estado</span></td>
+                    <td>@sitio.FechaCreacion.ToString("yyyy-MM-dd")</td>
+                    <td class="text-nowrap">
+                        <a asp-action="Details" asp-route-id="@sitio.Id">Detalle</a> |
+                        <a asp-action="AsociarComidas" asp-route-id="@sitio.Id">Asociar comidas</a> |
+                        <a asp-action="Edit" asp-route-id="@sitio.Id">Editar</a> |
+                        <a asp-action="UploadImages" asp-route-id="@sitio.Id">Imágenes</a> |
+                        <a asp-action="Delete" asp-route-id="@sitio.Id">Eliminar</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+</div>

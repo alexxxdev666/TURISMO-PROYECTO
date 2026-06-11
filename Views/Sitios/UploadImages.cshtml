@@ -1,0 +1,95 @@
+@model Turismo.Models.SitioMultimediaUploadViewModel
+
+@{
+    ViewData["Title"] = "Subir imágenes";
+}
+
+<div class="page-card mb-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+    <div>
+        <span class="soft-badge mb-2">Multimedia</span>
+        <h1 class="section-title mb-2">Subir imágenes al sitio</h1>
+        <p class="page-muted mb-0">Carga imágenes organizadas en la carpeta del sitio y asociadas a su registro.</p>
+    </div>
+    <a asp-action="Details" asp-route-id="@Model.Sitio.Id" class="btn btn-outline-secondary">Volver al sitio</a>
+</div>
+
+<div class="alert alert-info rounded-4 mb-4">
+    <strong>Flujo recomendado:</strong> 1) selecciona imágenes, 2) pulsa <em>Cargar imágenes</em>, 3) revisa abajo y elimina las incorrectas con el botón <em>Eliminar</em>.
+</div>
+
+<div class="row g-4">
+    <div class="col-12 col-lg-5">
+        <div class="page-card h-100">
+            <h2 class="section-title mb-3">Datos del sitio</h2>
+            <dl class="row mb-0">
+                <dt class="col-sm-4">Nombre</dt>
+                <dd class="col-sm-8">@Model.Sitio.Nombre</dd>
+                <dt class="col-sm-4">Estado</dt>
+                <dd class="col-sm-8">@Model.Sitio.Estado</dd>
+                <dt class="col-sm-4">Id</dt>
+                <dd class="col-sm-8">@Model.Sitio.Id</dd>
+            </dl>
+        </div>
+    </div>
+    <div class="col-12 col-lg-7">
+        <div class="page-card h-100">
+            <h2 class="section-title mb-3">Nueva carga</h2>
+
+            @if (TempData["SuccessMessage"] is string successMessage)
+            {
+                <div class="alert alert-success">@successMessage</div>
+            }
+            @if (TempData["ErrorMessage"] is string errorMessage)
+            {
+                <div class="alert alert-danger">@errorMessage</div>
+            }
+
+            <form asp-action="UploadImages" asp-route-id="@Model.Sitio.Id" method="post" enctype="multipart/form-data" class="d-grid gap-3">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Archivos" class="form-label">Selecciona una o varias imágenes</label>
+                    <input asp-for="Archivos" type="file" class="form-control" accept="image/*" multiple />
+                    <span asp-validation-for="Archivos" class="text-danger"></span>
+                </div>
+
+                <div>
+                    <button type="submit" class="btn btn-primary">Cargar imágenes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="page-card mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="section-title mb-0">Imágenes existentes</h2>
+        <span class="soft-badge">@Model.Imagenes.Count imagen(es)</span>
+    </div>
+
+    @if (Model.Imagenes == null || !Model.Imagenes.Any())
+    {
+        <div class="empty-state">Todavía no hay imágenes cargadas para este sitio. Puedes empezar con una portada representativa.</div>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach (var imagen in Model.Imagenes)
+            {
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="page-card h-100 p-2">
+                        <img src="@imagen.Url" alt="Imagen del sitio" class="img-fluid rounded mb-2" style="width:100%;height:220px;object-fit:cover;" />
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="small text-muted">Orden: @imagen.Orden</div>
+                            <form asp-action="DeleteImage" asp-route-id="@Model.Sitio.Id" asp-route-imageId="@imagen.Id" method="post" onsubmit="return confirm('¿Eliminar esta imagen?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

@@ -1,0 +1,45 @@
+@model IReadOnlyList<Turismo.Domain.Entities.Comida>
+
+@{
+    ViewData["Title"] = "Comidas";
+}
+
+<div class="page-card mb-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+    <div>
+        <span class="soft-badge mb-2">Catálogo</span>
+        <h1 class="section-title mb-2">Comidas</h1>
+        <p class="page-muted mb-0">Registra comidas o referencias gastronómicas relacionadas con el turismo.</p>
+    </div>
+    <a class="btn btn-primary" asp-action="Create">Nueva comida</a>
+</div>
+
+<div class="table-card">
+    @if (!Model.Any())
+    {
+        <div class="empty-state">Todavía no hay comidas registradas.</div>
+    }
+    else
+    {
+        <table class="table table-striped table-friendly mb-0">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var comida in Model)
+            {
+                <tr>
+                    <td class="fw-semibold">@comida.Nombre</td>
+                    <td class="text-nowrap">
+                        <a asp-action="Edit" asp-route-id="@comida.Id">Editar</a> |
+                        <a asp-action="UploadImages" asp-route-id="@comida.Id">Imágenes</a> |
+                        <a asp-action="Delete" asp-route-id="@comida.Id">Eliminar</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+</div>

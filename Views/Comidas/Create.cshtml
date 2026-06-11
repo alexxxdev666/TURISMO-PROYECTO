@@ -1,0 +1,24 @@
+@model Turismo.Models.ComidaFormViewModel
+
+@{
+    ViewData["Title"] = "Nueva comida";
+}
+
+<div class="page-card">
+    <span class="soft-badge mb-2">Nuevo registro</span>
+    <h1 class="section-title mb-3">Nueva comida</h1>
+    <p class="page-muted mb-4">Agrega un nombre claro y fácil de identificar.</p>
+
+    <form asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <div class="mb-4">
+            <label asp-for="Comida.Nombre" class="form-label">Nombre</label>
+            <input asp-for="Comida.Nombre" class="form-control" placeholder="Ej. Ceviche" />
+            <span asp-validation-for="Comida.Nombre" class="text-danger"></span>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>

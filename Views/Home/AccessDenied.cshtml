@@ -1,0 +1,30 @@
+@{
+    ViewData["Title"] = "Acceso denegado";
+    var returnUrl = ViewData["ReturnUrl"]?.ToString();
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+        <div class="page-card text-center">
+            <span class="soft-badge mb-3" style="background:#fee2e2;color:#991b1b;">Acceso restringido</span>
+            <h1 class="section-title mb-3">No tienes permiso para entrar aquí</h1>
+            <p class="page-muted mb-4">Solo el usuario Administrador puede acceder a los catálogos y realizar operaciones CRUD.</p>
+
+            <div class="alert alert-warning rounded-4 mb-4 text-start">
+                Debes iniciar sesión con la cuenta de Administrador para continuar.
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(returnUrl))
+            {
+                <div class="alert alert-light rounded-4 mb-4 text-start border">
+                    <strong>Sección solicitada:</strong> @returnUrl
+                </div>
+            }
+
+            <div class="d-flex flex-column flex-sm-row justify-content-center gap-2">
+                <a class="btn btn-primary" asp-controller="Auth" asp-action="Login" asp-route-accessDenied="true" asp-route-returnUrl="@returnUrl">Ir al login</a>
+                <a class="btn btn-secondary" asp-controller="Home" asp-action="Index">Volver al inicio</a>
+            </div>
+        </div>
+    </div>
+</div>

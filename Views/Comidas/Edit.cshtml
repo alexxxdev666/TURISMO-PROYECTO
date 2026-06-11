@@ -1,0 +1,24 @@
+@model Turismo.Models.ComidaFormViewModel
+
+@{
+    ViewData["Title"] = "Editar comida";
+}
+
+<div class="page-card">
+    <span class="soft-badge mb-2">Edición</span>
+    <h1 class="section-title mb-3">Editar comida</h1>
+
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Comida.Id" />
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <div class="mb-4">
+            <label asp-for="Comida.Nombre" class="form-label">Nombre</label>
+            <input asp-for="Comida.Nombre" class="form-control" />
+            <span asp-validation-for="Comida.Nombre" class="text-danger"></span>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>

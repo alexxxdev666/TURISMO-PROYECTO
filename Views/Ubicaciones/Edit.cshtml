@@ -1,0 +1,122 @@
+@model Turismo.Models.UbicacionFormViewModel
+
+@{
+    ViewData["Title"] = "Editar ubicación";
+}
+
+<div class="page-card">
+    <span class="soft-badge mb-2">Edición</span>
+    <h1 class="section-title mb-3">Editar ubicación</h1>
+
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Ubicacion.Id" />
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <div class="mb-3">
+            <label asp-for="Ubicacion.Nombre" class="form-label">Nombre</label>
+            <input asp-for="Ubicacion.Nombre" class="form-control" />
+            <span asp-validation-for="Ubicacion.Nombre" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Ubicacion.Tipo" class="form-label">Tipo</label>
+            <select asp-for="Ubicacion.Tipo" class="form-select">
+                <option value="Provincia">Provincia</option>
+                <option value="Canton">Cantón</option>
+                <option value="Parroquia">Parroquia</option>
+            </select>
+            <span asp-validation-for="Ubicacion.Tipo" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Pertenece a</label>
+            <select asp-for="Ubicacion.ParentId" class="form-select" asp-items="Model.Parents">
+                <option value="">(Sin padre)</option>
+            </select>
+            <span asp-validation-for="Ubicacion.ParentId" class="text-danger"></span>
+        </div>
+        <div class="mb-4">
+            <label asp-for="Ubicacion.Descripcion" class="form-label">Descripción</label>
+            <textarea asp-for="Ubicacion.Descripcion" class="form-control" rows="4"></textarea>
+        </div>
+        <div class="mb-4">
+            <label class="form-label">Coordenadas</label>
+            <p class="page-muted small mb-2">Mueve el marcador o haz clic sobre el mapa para ajustar la ubicación exacta.</p>
+            <div class="row g-3 mb-3">
+                <div class="col-12 col-md-6">
+                    <label asp-for="Ubicacion.Latitud" class="form-label">Latitud</label>
+                    <input asp-for="Ubicacion.Latitud" class="form-control" type="number" step="any" />
+                    <span asp-validation-for="Ubicacion.Latitud" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="Ubicacion.Longitud" class="form-label">Longitud</label>
+                    <input asp-for="Ubicacion.Longitud" class="form-control" type="number" step="any" />
+                    <span asp-validation-for="Ubicacion.Longitud" class="text-danger"></span>
+                </div>
+            </div>
+            <div id="ubicacionMap" class="route-map" data-lat="@Model.Ubicacion.Latitud" data-lon="@Model.Ubicacion.Longitud"></div>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mapContainer = document.getElementById('ubicacionMap');
+            if (!mapContainer) {
+                return;
+            }
+
+            const latInput = document.getElementById('Ubicacion_Latitud');
+            const lonInput = document.getElementById('Ubicacion_Longitud');
+            const defaultLat = -0.1807;
+            const defaultLon = -78.4678;
+            let lat = parseFloat(mapContainer.dataset.lat || latInput?.value || defaultLat);
+            let lon = parseFloat(mapContainer.dataset.lon || lonInput?.value || defaultLon);
+
+            if (Number.isNaN(lat)) lat = defaultLat;
+            if (Number.isNaN(lon)) lon = defaultLon;
+
+            const map = L.map('ubicacionMap').setView([lat, lon], 10);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            const marker = L.marker([lat, lon], { draggable: true }).addTo(map);
+
+            function syncInputs(newLat, newLon) {
+                if (latInput) latInput.value = newLat.toFixed(6);
+                if (lonInput) lonInput.value = newLon.toFixed(6);
+            }
+
+            syncInputs(lat, lon);
+
+            map.on('click', function (event) {
+                const { lat, lng } = event.latlng;
+                marker.setLatLng([lat, lng]);
+                syncInputs(lat, lng);
+            });
+
+            marker.on('dragend', function (event) {
+                const position = event.target.getLatLng();
+                syncInputs(position.lat, position.lng);
+            });
+
+            [latInput, lonInput].forEach(function (input) {
+                input.addEventListener('change', function () {
+                    const nextLat = parseFloat(latInput.value);
+                    const nextLon = parseFloat(lonInput.value);
+                    if (Number.isNaN(nextLat) || Number.isNaN(nextLon)) {
+                        return;
+                    }
+                    marker.setLatLng([nextLat, nextLon]);
+                    map.setView([nextLat, nextLon], map.getZoom());
+                });
+            });
+        });
+    </script>
+}

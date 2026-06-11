@@ -1,0 +1,81 @@
+@model Turismo.Models.SitioFormViewModel
+
+@{
+    ViewData["Title"] = "Editar sitio";
+}
+
+<div class="page-card">
+    <span class="soft-badge mb-2">Edición</span>
+    <h1 class="section-title mb-3">Editar sitio</h1>
+
+    <div class="mb-3">
+        <a asp-action="AsociarComidas" asp-route-id="@Model.Sitio.Id" class="btn btn-outline-primary btn-sm">Asociar comidas</a>
+    </div>
+
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Sitio.Id" />
+        <div class="mb-3">
+            <label asp-for="Sitio.Nombre" class="form-label"></label>
+            <input asp-for="Sitio.Nombre" class="form-control" />
+            <span asp-validation-for="Sitio.Nombre" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Sitio.Descripcion" class="form-label"></label>
+            <textarea asp-for="Sitio.Descripcion" class="form-control" rows="4"></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Ubicación</label>
+            <select asp-for="Sitio.UbicacionId" class="form-select" asp-items="Model.Ubicaciones"></select>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Sitio.Estado" class="form-label"></label>
+            <input asp-for="Sitio.Estado" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Comidas asociadas al sitio</label>
+            @if (Model.Comidas.Any())
+            {
+                <div class="border rounded-3 p-3 bg-light-subtle">
+                    <div class="row g-3">
+                        @for (var i = 0; i < Model.Comidas.Count; i++)
+                        {
+                            <div class="col-12 col-lg-6">
+                                <div class="p-3 rounded-3 border bg-white h-100">
+                                    <div class="form-check mb-2">
+                                        <input type="hidden" asp-for="Comidas[i].ComidaId" />
+                                        <input class="form-check-input" asp-for="Comidas[i].Seleccionada" />
+                                        <label class="form-check-label fw-semibold" asp-for="Comidas[i].Seleccionada">@Model.Comidas[i].Nombre</label>
+                                    </div>
+                                    <div class="row g-2 align-items-end">
+                                        <div class="col-12 col-md-6">
+                                            <label class="form-label mb-1">Valor por persona</label>
+                                            <input asp-for="Comidas[i].ValorReferencial" class="form-control" type="number" step="0.01" min="0" placeholder="Ej. 3" />
+                                            <span asp-validation-for="Comidas[i].ValorReferencial" class="text-danger small"></span>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <label class="form-label mb-1">Observación</label>
+                                            <input asp-for="Comidas[i].Observacion" class="form-control" placeholder="Opcional" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="form-text">Marca la comida y ajusta su valor referencial por persona.</div>
+            }
+            else
+            {
+                <div class="alert alert-warning mb-0">No hay comidas registradas todavía. Crea al menos una comida para asociarla.</div>
+            }
+        </div>
+        <div class="mb-4">
+            <label asp-for="Sitio.FechaCreacion" class="form-label"></label>
+            <input asp-for="Sitio.FechaCreacion" class="form-control" type="date" />
+        </div>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>

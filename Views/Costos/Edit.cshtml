@@ -1,0 +1,39 @@
+@model Turismo.Models.CostoFormViewModel
+
+@{
+    ViewData["Title"] = "Editar costo";
+}
+
+<div class="page-card">
+    <span class="soft-badge mb-2">Edición</span>
+    <h1 class="section-title mb-3">Editar costo</h1>
+
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Costo.Id" />
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <div class="mb-3">
+            <label asp-for="Costo.SitioId" class="form-label">Sitio</label>
+            <select asp-for="Costo.SitioId" class="form-select" asp-items="Model.Sitios"></select>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Costo.Tipo" class="form-label">Actividad / tipo de costo</label>
+            <input asp-for="Costo.Tipo" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label asp-for="Costo.Valor" class="form-label">Valor</label>
+            <input asp-for="Costo.Valor" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label asp-for="Costo.Moneda" class="form-label">Moneda</label>
+            <input asp-for="Costo.Moneda" class="form-control" />
+        </div>
+        <div class="mb-4">
+            <label asp-for="Costo.Observacion" class="form-label">Observación</label>
+            <textarea asp-for="Costo.Observacion" class="form-control" rows="4"></textarea>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>

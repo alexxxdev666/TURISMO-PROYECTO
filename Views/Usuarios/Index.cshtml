@@ -1,0 +1,48 @@
+@model IReadOnlyList<Turismo.Domain.Entities.Usuario>
+
+@{
+    ViewData["Title"] = "Usuarios";
+}
+
+<div class="page-card mb-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+    <div>
+        <span class="soft-badge mb-2">Seguridad</span>
+        <h1 class="section-title mb-2">Usuarios</h1>
+        <p class="page-muted mb-0">Administra cuentas de acceso con una vista clara y ordenada.</p>
+    </div>
+    <a class="btn btn-primary" asp-action="Create">Nuevo usuario</a>
+</div>
+
+<div class="table-card">
+    @if (!Model.Any())
+    {
+        <div class="empty-state">Todavía no hay usuarios registrados.</div>
+    }
+    else
+    {
+        <table class="table table-striped table-friendly mb-0">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Activo</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var usuario in Model)
+            {
+                <tr>
+                    <td class="fw-semibold">@usuario.Nombre</td>
+                    <td>@usuario.Email</td>
+                    <td><span class="soft-badge">@(usuario.Activo ? "Activo" : "Inactivo")</span></td>
+                    <td class="text-nowrap">
+                        <a asp-action="Edit" asp-route-id="@usuario.Id">Editar</a> |
+                        <a asp-action="Delete" asp-route-id="@usuario.Id">Eliminar</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+</div>

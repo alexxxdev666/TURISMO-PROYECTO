@@ -1,0 +1,76 @@
+@model Turismo.Models.ComidaMultimediaUploadViewModel
+
+@{
+    ViewData["Title"] = "Imágenes de comida";
+}
+
+<div class="page-card mb-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+    <div>
+        <span class="soft-badge mb-2">Multimedia</span>
+        <h1 class="section-title mb-2">Imágenes de comida</h1>
+        <p class="page-muted mb-0">Gestiona imágenes en la carpeta propia de esta comida.</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary">Volver a comidas</a>
+</div>
+
+<div class="alert alert-info rounded-4 mb-4">
+    <strong>Consejo rápido:</strong> sube imágenes claras del plato. Si cargas una imagen equivocada, elimínala abajo con un clic.
+</div>
+
+<div class="page-card mb-4">
+    <h2 class="section-title mb-3">@Model.Comida.Nombre</h2>
+
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="alert alert-success">@successMessage</div>
+    }
+    @if (TempData["ErrorMessage"] is string errorMessage)
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
+
+    <form asp-action="UploadImages" asp-route-id="@Model.Comida.Id" method="post" enctype="multipart/form-data" class="d-grid gap-3">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="mb-3">
+            <label asp-for="Archivos" class="form-label">Selecciona una o varias imágenes</label>
+            <input asp-for="Archivos" type="file" class="form-control" accept="image/*" multiple />
+            <span asp-validation-for="Archivos" class="text-danger"></span>
+        </div>
+
+        <div>
+            <button type="submit" class="btn btn-primary">Cargar imágenes</button>
+        </div>
+    </form>
+</div>
+
+<div class="page-card">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="section-title mb-0">Imágenes existentes</h2>
+        <span class="soft-badge">@Model.Imagenes.Count imagen(es)</span>
+    </div>
+
+    @if (Model.Imagenes == null || !Model.Imagenes.Any())
+    {
+        <div class="empty-state">Todavía no hay imágenes cargadas para esta comida.</div>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach (var imagenUrl in Model.Imagenes)
+            {
+                var nombreArchivo = System.IO.Path.GetFileName(imagenUrl);
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="page-card h-100 p-2">
+                        <img src="@imagenUrl" alt="Imagen de comida" class="img-fluid rounded mb-2" style="width:100%;height:220px;object-fit:cover;" />
+                        <form asp-action="DeleteImage" asp-route-id="@Model.Comida.Id" asp-route-fileName="@nombreArchivo" method="post" onsubmit="return confirm('¿Eliminar esta imagen?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

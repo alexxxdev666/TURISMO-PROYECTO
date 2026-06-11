@@ -1,0 +1,24 @@
+@model Turismo.Domain.Entities.Sitio
+
+@{
+    ViewData["Title"] = "Eliminar sitio";
+}
+
+<div class="page-card">
+    <span class="soft-badge mb-2" style="background:#fee2e2;color:#991b1b;">Acción irreversible</span>
+    <h1 class="section-title mb-2">Eliminar sitio</h1>
+    <p class="page-muted mb-4">¿Seguro que deseas eliminar este sitio? Esta acción no se puede deshacer.</p>
+
+    <dl class="row mb-4">
+        <dt class="col-sm-3">Nombre</dt>
+        <dd class="col-sm-9">@Model.Nombre</dd>
+        <dt class="col-sm-3">Estado</dt>
+        <dd class="col-sm-9">@Model.Estado</dd>
+    </dl>
+
+    <form asp-action="Delete" method="post" class="d-flex gap-2">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
