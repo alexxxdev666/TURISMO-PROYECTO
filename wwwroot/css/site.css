@@ -127,6 +127,26 @@ table.table-responsive {
   color: rgba(255, 255, 255, 0.85) !important;
 }
 
+.hero-panel {
+  color: #fff;
+  background: rgba(6, 55, 46, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(12px);
+}
+
+.hero-panel p {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.hero-panel .feature-card {
+  background: rgba(255, 250, 240, 0.94);
+  color: var(--app-text);
+}
+
+.hero-panel .feature-card .page-muted {
+  color: var(--app-muted);
+}
+
 .page-card,
 .login-card,
 .table-card {
