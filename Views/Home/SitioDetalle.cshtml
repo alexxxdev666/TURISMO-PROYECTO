@@ -27,6 +27,7 @@
 
     var actividades = (Model.Actividades ?? string.Empty)
         .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+    var actividadImagenes = imagenes.Any() ? imagenes.ToArray() : Array.Empty<Turismo.Domain.Entities.Multimedia>();
 
     var usd = new System.Globalization.CultureInfo("en-US");
     var fechaCuraduria = "10/06/2026";
@@ -57,10 +58,25 @@
             {
                 <div class="mb-3">
                     <h6 class="eyebrow mb-2">Actividades recomendadas</h6>
-                    <div class="d-flex flex-wrap gap-2">
-                        @foreach (var actividad in actividades)
+                    <div class="activity-card-grid">
+                        @for (var i = 0; i < actividades.Length; i++)
                         {
-                            <span class="soft-badge activity-badge">@actividad</span>
+                            var actividad = actividades[i];
+                            var imagenActividad = actividadImagenes.Length > 0 ? actividadImagenes[i % actividadImagenes.Length].Url : null;
+
+                            <div class="activity-card">
+                                @if (!string.IsNullOrWhiteSpace(imagenActividad))
+                                {
+                                    <img src="@imagenActividad" alt="Actividad @actividad en @Model.Nombre" class="activity-image" />
+                                }
+                                else
+                                {
+                                    <div class="activity-image activity-image-placeholder"></div>
+                                }
+                                <div class="activity-overlay">
+                                    <span class="activity-label">@actividad</span>
+                                </div>
+                            </div>
                         }
                     </div>
                 </div>

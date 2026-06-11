@@ -10,17 +10,40 @@ namespace Turismo.Controllers;
 public class ComidasController : Controller
 {
     private readonly ComidaService _service;
+    private readonly SitioService _sitioService;
     private readonly IWebHostEnvironment _webHostEnvironment;
 
-    public ComidasController(ComidaService service, IWebHostEnvironment webHostEnvironment)
+    public ComidasController(ComidaService service, SitioService sitioService, IWebHostEnvironment webHostEnvironment)
     {
         _service = service;
+        _sitioService = sitioService;
         _webHostEnvironment = webHostEnvironment;
     }
 
     public async Task<IActionResult> Index()
     {
-        return View(await _service.GetAllAsync());
+        var comidas = await _service.GetAllAsync();
+        var sitios = await _sitioService.GetAllAsync();
+        var sitiosPorComida = comidas.ToDictionary(comida => comida.Id, _ => new List<string>());
+
+        foreach (var sitio in sitios)
+        {
+            var relaciones = await _service.GetSitioComidasAsync(sitio.Id);
+            foreach (var relacion in relaciones)
+            {
+                if (sitiosPorComida.TryGetValue(relacion.ComidaId, out var nombresSitios))
+                {
+                    nombresSitios.Add(sitio.Nombre);
+                }
+            }
+        }
+
+        ViewBag.SitiosPorComida = sitiosPorComida.ToDictionary(
+            item => item.Key,
+            item => item.Value.Distinct().OrderBy(nombre => nombre).ToList());
+        ViewBag.PortadasComidas = comidas.ToDictionary(comida => comida.Id, comida => ObtenerPortadaComida(comida.Id));
+
+        return View(comidas);
     }
 
     public IActionResult Create() => View(new ComidaFormViewModel());
@@ -121,7 +144,7 @@ public class ComidasController : Controller
         var rutaComida = ObtenerRutaCarpetaComida(id);
         Directory.CreateDirectory(rutaComida);
 
-        foreach (var archivo in vm.Archivos.Where(archivo => archivo != null && archivo.Length > 0))
+        foreach (var archivo in vm.Archivos!.Where(archivo => archivo != null && archivo.Length > 0))
         {
             var extension = Path.GetExtension(archivo.FileName);
             var nombreArchivo = $"{Guid.NewGuid():N}{extension}";
@@ -195,6 +218,11 @@ public class ComidasController : Controller
             .Select(nombre => $"/uploads/comidas/{comidaId}/{nombre}")
             .OrderBy(url => url)
             .ToList();
+    }
+
+    private string? ObtenerPortadaComida(int comidaId)
+    {
+        return ObtenerImagenesComida(comidaId).FirstOrDefault();
     }
 
     private string ObtenerRutaCarpetaComida(int comidaId)

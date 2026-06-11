@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Ubicaciones";
+    var parentNombres = ViewBag.ParentNombres as Dictionary<int, string> ?? new Dictionary<int, string>();
 }
 
 <div class="page-card mb-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
@@ -36,7 +37,7 @@
                 <tr>
                     <td class="fw-semibold">@ubicacion.Nombre</td>
                     <td><span class="soft-badge">@ubicacion.Tipo</span></td>
-                    <td>@(ubicacion.ParentId.HasValue && ViewBag.ParentNombres?.ContainsKey(ubicacion.ParentId.Value) == true ? ViewBag.ParentNombres[ubicacion.ParentId.Value] : "-")</td>
+                    <td>@(ubicacion.ParentId.HasValue && parentNombres.TryGetValue(ubicacion.ParentId.Value, out var parentNombre) ? parentNombre : "-")</td>
                     <td>@(string.IsNullOrWhiteSpace(ubicacion.Descripcion) ? "-" : ubicacion.Descripcion)</td>
                     <td class="text-nowrap">
                         <a asp-action="Details" asp-route-id="@ubicacion.Id">Detalle</a> |

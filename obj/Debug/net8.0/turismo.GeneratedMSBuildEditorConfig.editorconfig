@@ -1,5 +1,7 @@
 is_global = true
 build_property.TargetFramework = net8.0
+build_property.TargetFrameworkIdentifier = .NETCoreApp
+build_property.TargetFrameworkVersion = v8.0
 build_property.TargetPlatformMinVersion = 
 build_property.UsingMicrosoftNETSdkWeb = true
 build_property.ProjectTypeGuids = 
@@ -9,155 +11,157 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = turismo
 build_property.RootNamespace = turismo
-build_property.ProjectDir = E:\ProyectoTurismo\turismo\
+build_property.ProjectDir = C:\Users\Alex\Downloads\TRABAJO\TURISMO\TURISMO PROYECTO\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = E:\ProyectoTurismo\turismo
+build_property.MSBuildProjectDirectory = C:\Users\Alex\Downloads\TRABAJO\TURISMO\TURISMO PROYECTO
 build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 8.0
+build_property.EnableCodeStyleSeverity = 
 
-[E:/ProyectoTurismo/turismo/Views/Auth/Login.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Auth/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXV0aFxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Comidas/Create.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Comidas/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29taWRhc1xDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Comidas/Delete.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Comidas/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29taWRhc1xEZWxldGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Comidas/Edit.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Comidas/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29taWRhc1xFZGl0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Comidas/Index.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Comidas/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29taWRhc1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Comidas/UploadImages.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Comidas/UploadImages.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29taWRhc1xVcGxvYWRJbWFnZXMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Costos/Create.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Costos/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29zdG9zXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Costos/Delete.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Costos/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29zdG9zXERlbGV0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Costos/Edit.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Costos/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29zdG9zXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Costos/Index.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Costos/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29zdG9zXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Home/AccessDenied.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Home/AccessDenied.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxBY2Nlc3NEZW5pZWQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Home/Index.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Home/Privacy.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Home/SitioDetalle.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Home/SitioDetalle.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxTaXRpb0RldGFsbGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Home/Sitios.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Home/Sitios.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxTaXRpb3MuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Shared/Error.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Shared/_ValidationScriptsPartial.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Sitios/AsociarComidas.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Sitios/AsociarComidas.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2l0aW9zXEFzb2NpYXJDb21pZGFzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Sitios/Create.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Sitios/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2l0aW9zXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Sitios/Delete.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Sitios/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2l0aW9zXERlbGV0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Sitios/Details.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Sitios/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2l0aW9zXERldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Sitios/Edit.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Sitios/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2l0aW9zXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Sitios/Index.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Sitios/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2l0aW9zXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Sitios/UploadImages.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Sitios/UploadImages.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2l0aW9zXFVwbG9hZEltYWdlcy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Ubicaciones/Create.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Ubicaciones/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVWJpY2FjaW9uZXNcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Ubicaciones/Delete.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Ubicaciones/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVWJpY2FjaW9uZXNcRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Ubicaciones/Details.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Ubicaciones/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVWJpY2FjaW9uZXNcRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Ubicaciones/Edit.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Ubicaciones/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVWJpY2FjaW9uZXNcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Ubicaciones/Index.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Ubicaciones/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVWJpY2FjaW9uZXNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Usuarios/Create.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Usuarios/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb3NcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Usuarios/Delete.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Usuarios/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb3NcRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Usuarios/Edit.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Usuarios/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb3NcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Usuarios/Index.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Usuarios/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb3NcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/_ViewImports.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/_ViewStart.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/ProyectoTurismo/turismo/Views/Shared/_Layout.cshtml]
+[C:/Users/Alex/Downloads/TRABAJO/TURISMO/TURISMO PROYECTO/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-e5ap1pqieq

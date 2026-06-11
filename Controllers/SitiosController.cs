@@ -31,6 +31,17 @@ public class SitiosController : Controller
     public async Task<IActionResult> Index()
     {
         var sitios = await _sitioService.GetAllAsync();
+        var ubicaciones = await _ubicacionService.GetAllAsync();
+        var ubicacionesPorId = ubicaciones.ToDictionary(ubicacion => ubicacion.Id);
+
+        ViewBag.Ubicaciones = ubicacionesPorId;
+        ViewBag.UbicacionesCompletas = sitios.ToDictionary(
+            sitio => sitio.Id,
+            sitio => ubicacionesPorId.TryGetValue(sitio.UbicacionId, out var ubicacion)
+                ? BuildUbicacionCompleta(ubicacion, ubicaciones)
+                : "Sin ubicacion asignada");
+        ViewBag.TotalUbicaciones = ubicaciones.Count;
+
         return View(sitios);
     }
 
@@ -202,7 +213,7 @@ public class SitiosController : Controller
         var imagenesExistentes = await _multimediaService.GetBySitioAsync(id);
         var siguienteOrden = imagenesExistentes.Count() == 0 ? 1 : imagenesExistentes.Max(imagen => imagen.Orden) + 1;
 
-        foreach (var archivo in vm.Archivos.Where(archivo => archivo != null && archivo.Length > 0))
+        foreach (var archivo in vm.Archivos!.Where(archivo => archivo != null && archivo.Length > 0))
         {
             var extension = Path.GetExtension(archivo.FileName);
             var nombreArchivo = $"{Guid.NewGuid():N}{extension}";
@@ -318,6 +329,28 @@ public class SitiosController : Controller
     {
         var rutaUploads = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "sitios", sitioId.ToString());
         Directory.CreateDirectory(rutaUploads);
+    }
+
+    private static string BuildUbicacionCompleta(Ubicacion ubicacion, IReadOnlyList<Ubicacion> ubicaciones)
+    {
+        var ubicacionesPorId = ubicaciones.ToDictionary(item => item.Id);
+        var partes = new Stack<string>();
+        var visitados = new HashSet<int>();
+        Ubicacion? actual = ubicacion;
+
+        while (actual != null && visitados.Add(actual.Id))
+        {
+            partes.Push($"{actual.Tipo}: {actual.Nombre}");
+
+            if (!actual.ParentId.HasValue || !ubicacionesPorId.TryGetValue(actual.ParentId.Value, out var padre))
+            {
+                break;
+            }
+
+            actual = padre;
+        }
+
+        return string.Join(" > ", partes);
     }
 
     private void EliminarArchivoImagen(string url)

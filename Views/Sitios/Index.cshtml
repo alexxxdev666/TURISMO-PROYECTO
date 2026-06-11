@@ -1,46 +1,128 @@
 @model IReadOnlyList<Turismo.Domain.Entities.Sitio>
 
 @{
-    ViewData["Title"] = "Sitios";
+    ViewData["Title"] = "Sitios y ubicaciones";
+
+    var ubicaciones = ViewBag.Ubicaciones as Dictionary<int, Turismo.Domain.Entities.Ubicacion> ?? new Dictionary<int, Turismo.Domain.Entities.Ubicacion>();
+    var ubicacionesCompletas = ViewBag.UbicacionesCompletas as Dictionary<int, string> ?? new Dictionary<int, string>();
+    var totalUbicaciones = ViewBag.TotalUbicaciones is int totalUbicacionesValue ? totalUbicacionesValue : 0;
 }
 
 <div class="page-card mb-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
     <div>
-        <span class="soft-badge mb-2">Catálogo principal</span>
-        <h1 class="section-title mb-2">Sitios turísticos</h1>
-        <p class="page-muted mb-0">Administra los lugares turísticos con información clara y de fácil acceso.</p>
+        <span class="soft-badge mb-2">Administrador unificado</span>
+        <h1 class="section-title mb-2">Sitios y ubicaciones</h1>
+        <p class="page-muted mb-0">Administra cada destino junto con su ubicacion, coordenadas y ruta geografica en una sola vista.</p>
     </div>
-    <a class="btn btn-primary" asp-action="Create">Nuevo sitio</a>
+    <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-primary" asp-action="Create">Nuevo sitio</a>
+        <a class="btn btn-outline-primary" asp-controller="Ubicaciones" asp-action="Create">Nueva ubicacion</a>
+        <a class="btn btn-outline-secondary" asp-controller="Ubicaciones" asp-action="Index">Gestionar ubicaciones</a>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-12 col-md-4">
+        <div class="feature-card">
+            <div class="feature-icon">@Model.Count</div>
+            <h5 class="fw-bold mb-1">Sitios registrados</h5>
+            <p class="text-muted mb-0">Destinos turisticos publicados o listos para editar.</p>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="feature-card">
+            <div class="feature-icon">@totalUbicaciones</div>
+            <h5 class="fw-bold mb-1">Ubicaciones creadas</h5>
+            <p class="text-muted mb-0">Provincias, cantones, parroquias y puntos exactos disponibles.</p>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="feature-card">
+            <div class="feature-icon">1</div>
+            <h5 class="fw-bold mb-1">Vista combinada</h5>
+            <p class="text-muted mb-0">El sitio y su ubicacion se revisan juntos, sin entrar a pantallas separadas.</p>
+        </div>
+    </div>
 </div>
 
 <div class="table-card">
     @if (!Model.Any())
     {
-        <div class="empty-state">Aún no hay sitios registrados. Crea el primero para comenzar.</div>
+        <div class="empty-state">Aun no hay sitios registrados. Crea el primero para comenzar.</div>
     }
     else
     {
         <table class="table table-striped table-friendly mb-0">
             <thead>
                 <tr>
-                    <th>Nombre</th>
+                    <th>Sitio turistico</th>
+                    <th>Ubicacion vinculada</th>
+                    <th>Actividades</th>
                     <th>Estado</th>
-                    <th>Fecha creación</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
             @foreach (var sitio in Model)
             {
+                var ubicacion = ubicaciones.TryGetValue(sitio.UbicacionId, out var ubicacionEncontrada) ? ubicacionEncontrada : null;
+                var rutaUbicacion = ubicacionesCompletas.TryGetValue(sitio.Id, out var rutaEncontrada) ? rutaEncontrada : "Sin ruta registrada";
+                var actividades = (sitio.Actividades ?? string.Empty)
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                var descripcion = string.IsNullOrWhiteSpace(sitio.Descripcion)
+                    ? "Sin descripcion registrada."
+                    : sitio.Descripcion.Length > 120 ? $"{sitio.Descripcion[..120]}..." : sitio.Descripcion;
+
                 <tr>
-                    <td class="fw-semibold">@sitio.Nombre</td>
+                    <td>
+                        <div class="fw-semibold">@sitio.Nombre</div>
+                        <div class="text-muted small">@descripcion</div>
+                        <div class="text-muted small mt-1">Creado: @sitio.FechaCreacion.ToString("yyyy-MM-dd")</div>
+                    </td>
+                    <td>
+                        @if (ubicacion != null)
+                        {
+                            <div class="fw-semibold">@ubicacion.Tipo: @ubicacion.Nombre</div>
+                            <div class="text-muted small">@rutaUbicacion</div>
+
+                            @if (ubicacion.Latitud.HasValue && ubicacion.Longitud.HasValue)
+                            {
+                                <span class="soft-badge soft-badge-light mt-2">
+                                    @ubicacion.Latitud.Value.ToString("0.000000"), @ubicacion.Longitud.Value.ToString("0.000000")
+                                </span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="text-muted">Sin ubicacion asignada</span>
+                        }
+                    </td>
+                    <td>
+                        @if (actividades.Length > 0)
+                        {
+                            <div class="d-flex flex-wrap gap-1">
+                                @foreach (var actividad in actividades.Take(3))
+                                {
+                                    <span class="soft-badge">@actividad</span>
+                                }
+                            </div>
+
+                            @if (actividades.Length > 3)
+                            {
+                                <div class="text-muted small mt-1">+@(actividades.Length - 3) mas</div>
+                            }
+                        }
+                        else
+                        {
+                            <span class="text-muted">Sin actividades</span>
+                        }
+                    </td>
                     <td><span class="soft-badge">@sitio.Estado</span></td>
-                    <td>@sitio.FechaCreacion.ToString("yyyy-MM-dd")</td>
                     <td class="text-nowrap">
                         <a asp-action="Details" asp-route-id="@sitio.Id">Detalle</a> |
-                        <a asp-action="AsociarComidas" asp-route-id="@sitio.Id">Asociar comidas</a> |
+                        <a asp-action="AsociarComidas" asp-route-id="@sitio.Id">Comidas</a> |
                         <a asp-action="Edit" asp-route-id="@sitio.Id">Editar</a> |
-                        <a asp-action="UploadImages" asp-route-id="@sitio.Id">Imágenes</a> |
+                        <a asp-action="UploadImages" asp-route-id="@sitio.Id">Imagenes</a> |
                         <a asp-action="Delete" asp-route-id="@sitio.Id">Eliminar</a>
                     </td>
                 </tr>
