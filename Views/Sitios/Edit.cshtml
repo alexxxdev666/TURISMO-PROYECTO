@@ -24,6 +24,11 @@
             <textarea asp-for="Sitio.Descripcion" class="form-control" rows="4"></textarea>
         </div>
         <div class="mb-3">
+            <label asp-for="Sitio.Actividades" class="form-label">Actividades</label>
+            <textarea asp-for="Sitio.Actividades" class="form-control" rows="3" placeholder="Ej. Senderismo, fotografía, observación de aves"></textarea>
+            <div class="form-text">Separa las actividades con comas para mostrarlas en el detalle público.</div>
+        </div>
+        <div class="mb-3">
             <label class="form-label">Ubicación</label>
             <select asp-for="Sitio.UbicacionId" class="form-select" asp-items="Model.Ubicaciones"></select>
         </div>

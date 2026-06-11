@@ -1,6 +1,6 @@
-using System.Data;
-using System.Data.OleDb;
+﻿using System.Data;
 using Turismo.Application.Interfaces;
+using Turismo.Infrastructure.Data;
 using Turismo.Domain.Entities;
 
 namespace Turismo.Infrastructure.Repositories;
@@ -34,7 +34,7 @@ public class ComidaRepository : IComidaRepository
         using var connection = _connectionFactory.CreateConnection();
         using var command = connection.CreateCommand();
         command.CommandText = "SELECT Id, Nombre FROM Comida WHERE Id = ?";
-        command.Parameters.Add(new OleDbParameter { Value = id });
+        command.AddParameter(id);
         connection.Open();
         using var reader = command.ExecuteReader();
         if (reader != null && reader.Read())
@@ -54,7 +54,7 @@ public class ComidaRepository : IComidaRepository
                                INNER JOIN SitioComida sc ON c.Id = sc.ComidaId
                                WHERE sc.SitioId = ?
                                ORDER BY c.Nombre";
-        command.Parameters.Add(new OleDbParameter { Value = sitioId });
+        command.AddParameter(sitioId);
         connection.Open();
         using var reader = command.ExecuteReader();
         while (reader != null && reader.Read())
@@ -74,7 +74,7 @@ public class ComidaRepository : IComidaRepository
                                FROM SitioComida
                                WHERE SitioId = ?
                                ORDER BY ComidaId";
-        command.Parameters.Add(new OleDbParameter { Value = sitioId });
+        command.AddParameter(sitioId);
         connection.Open();
         using var reader = command.ExecuteReader();
         while (reader != null && reader.Read())
@@ -96,10 +96,10 @@ public class ComidaRepository : IComidaRepository
         using var connection = _connectionFactory.CreateConnection();
         using var command = connection.CreateCommand();
         command.CommandText = "INSERT INTO Comida (Nombre) VALUES (?)";
-        command.Parameters.Add(new OleDbParameter { Value = entity.Nombre });
+        command.AddParameter(entity.Nombre);
         connection.Open();
         command.ExecuteNonQuery();
-        command.CommandText = "SELECT @@IDENTITY";
+        command.CommandText = connection.GetIdentityQuery();
         var result = command.ExecuteScalar();
         return Task.FromResult(Convert.ToInt32(result));
     }
@@ -112,7 +112,7 @@ public class ComidaRepository : IComidaRepository
         using (var deleteCommand = connection.CreateCommand())
         {
             deleteCommand.CommandText = "DELETE FROM SitioComida WHERE SitioId = ?";
-            deleteCommand.Parameters.Add(new OleDbParameter { Value = sitioId });
+            deleteCommand.AddParameter(sitioId);
             deleteCommand.ExecuteNonQuery();
         }
 
@@ -126,10 +126,10 @@ public class ComidaRepository : IComidaRepository
         {
             using var insertCommand = connection.CreateCommand();
             insertCommand.CommandText = "INSERT INTO SitioComida (SitioId, ComidaId, ValorReferencial, Observacion) VALUES (?, ?, ?, ?)";
-            insertCommand.Parameters.Add(new OleDbParameter { Value = sitioId });
-            insertCommand.Parameters.Add(new OleDbParameter { Value = item.ComidaId });
-            insertCommand.Parameters.Add(new OleDbParameter { Value = item.ValorReferencial.HasValue ? item.ValorReferencial.Value : DBNull.Value });
-            insertCommand.Parameters.Add(new OleDbParameter { Value = (object?)item.Observacion ?? DBNull.Value });
+            insertCommand.AddParameter(sitioId);
+            insertCommand.AddParameter(item.ComidaId);
+            insertCommand.AddParameter(item.ValorReferencial.HasValue ? item.ValorReferencial.Value : DBNull.Value);
+            insertCommand.AddParameter((object?)item.Observacion ?? DBNull.Value);
             insertCommand.ExecuteNonQuery();
         }
 
@@ -141,8 +141,8 @@ public class ComidaRepository : IComidaRepository
         using var connection = _connectionFactory.CreateConnection();
         using var command = connection.CreateCommand();
         command.CommandText = "UPDATE Comida SET Nombre = ? WHERE Id = ?";
-        command.Parameters.Add(new OleDbParameter { Value = entity.Nombre });
-        command.Parameters.Add(new OleDbParameter { Value = entity.Id });
+        command.AddParameter(entity.Nombre);
+        command.AddParameter(entity.Id);
         connection.Open();
         command.ExecuteNonQuery();
         return Task.CompletedTask;
@@ -153,7 +153,7 @@ public class ComidaRepository : IComidaRepository
         using var connection = _connectionFactory.CreateConnection();
         using var command = connection.CreateCommand();
         command.CommandText = "DELETE FROM Comida WHERE Id = ?";
-        command.Parameters.Add(new OleDbParameter { Value = id });
+        command.AddParameter(id);
         connection.Open();
         command.ExecuteNonQuery();
         return Task.CompletedTask;
@@ -168,3 +168,4 @@ public class ComidaRepository : IComidaRepository
         };
     }
 }
+

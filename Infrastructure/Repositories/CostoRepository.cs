@@ -1,6 +1,6 @@
-using System.Data;
-using System.Data.OleDb;
+﻿using System.Data;
 using Turismo.Application.Interfaces;
+using Turismo.Infrastructure.Data;
 using Turismo.Domain.Entities;
 
 namespace Turismo.Infrastructure.Repositories;
@@ -34,7 +34,7 @@ public class CostoRepository : ICostoRepository
         using var connection = _connectionFactory.CreateConnection();
         using var command = connection.CreateCommand();
         command.CommandText = "SELECT Id, SitioId, Tipo, Valor, Moneda, Observacion FROM Costo WHERE Id = ?";
-        command.Parameters.Add(new OleDbParameter { Value = id });
+        command.AddParameter(id);
         connection.Open();
         using var reader = command.ExecuteReader();
         if (reader != null && reader.Read())
@@ -50,7 +50,7 @@ public class CostoRepository : ICostoRepository
         using var connection = _connectionFactory.CreateConnection();
         using var command = connection.CreateCommand();
         command.CommandText = "SELECT Id, SitioId, Tipo, Valor, Moneda, Observacion FROM Costo WHERE SitioId = ?";
-        command.Parameters.Add(new OleDbParameter { Value = sitioId });
+        command.AddParameter(sitioId);
         connection.Open();
         using var reader = command.ExecuteReader();
         while (reader != null && reader.Read())
@@ -65,14 +65,14 @@ public class CostoRepository : ICostoRepository
         using var connection = _connectionFactory.CreateConnection();
         using var command = connection.CreateCommand();
         command.CommandText = "INSERT INTO Costo (SitioId, Tipo, Valor, Moneda, Observacion) VALUES (?, ?, ?, ?, ?)";
-        command.Parameters.Add(new OleDbParameter { Value = entity.SitioId });
-        command.Parameters.Add(new OleDbParameter { Value = entity.Tipo });
-        command.Parameters.Add(new OleDbParameter { Value = entity.Valor });
-        command.Parameters.Add(new OleDbParameter { Value = entity.Moneda });
-        command.Parameters.Add(new OleDbParameter { Value = (object?)entity.Observacion ?? DBNull.Value });
+        command.AddParameter(entity.SitioId);
+        command.AddParameter(entity.Tipo);
+        command.AddParameter(entity.Valor);
+        command.AddParameter(entity.Moneda);
+        command.AddParameter((object?)entity.Observacion ?? DBNull.Value);
         connection.Open();
         command.ExecuteNonQuery();
-        command.CommandText = "SELECT @@IDENTITY";
+        command.CommandText = connection.GetIdentityQuery();
         var result = command.ExecuteScalar();
         return Task.FromResult(Convert.ToInt32(result));
     }
@@ -82,12 +82,12 @@ public class CostoRepository : ICostoRepository
         using var connection = _connectionFactory.CreateConnection();
         using var command = connection.CreateCommand();
         command.CommandText = "UPDATE Costo SET SitioId = ?, Tipo = ?, Valor = ?, Moneda = ?, Observacion = ? WHERE Id = ?";
-        command.Parameters.Add(new OleDbParameter { Value = entity.SitioId });
-        command.Parameters.Add(new OleDbParameter { Value = entity.Tipo });
-        command.Parameters.Add(new OleDbParameter { Value = entity.Valor });
-        command.Parameters.Add(new OleDbParameter { Value = entity.Moneda });
-        command.Parameters.Add(new OleDbParameter { Value = (object?)entity.Observacion ?? DBNull.Value });
-        command.Parameters.Add(new OleDbParameter { Value = entity.Id });
+        command.AddParameter(entity.SitioId);
+        command.AddParameter(entity.Tipo);
+        command.AddParameter(entity.Valor);
+        command.AddParameter(entity.Moneda);
+        command.AddParameter((object?)entity.Observacion ?? DBNull.Value);
+        command.AddParameter(entity.Id);
         connection.Open();
         command.ExecuteNonQuery();
         return Task.CompletedTask;
@@ -98,7 +98,7 @@ public class CostoRepository : ICostoRepository
         using var connection = _connectionFactory.CreateConnection();
         using var command = connection.CreateCommand();
         command.CommandText = "DELETE FROM Costo WHERE Id = ?";
-        command.Parameters.Add(new OleDbParameter { Value = id });
+        command.AddParameter(id);
         connection.Open();
         command.ExecuteNonQuery();
         return Task.CompletedTask;
@@ -117,3 +117,4 @@ public class CostoRepository : ICostoRepository
         };
     }
 }
+

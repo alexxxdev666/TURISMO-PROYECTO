@@ -1,6 +1,6 @@
-using System.Data;
-using System.Data.OleDb;
+﻿using System.Data;
 using Turismo.Application.Interfaces;
+using Turismo.Infrastructure.Data;
 using Turismo.Domain.Entities;
 
 namespace Turismo.Infrastructure.Repositories;
@@ -34,7 +34,7 @@ public class UsuarioRepository : IUsuarioRepository
         using var connection = _connectionFactory.CreateConnection();
         using var command = connection.CreateCommand();
         command.CommandText = "SELECT Id, Nombre, Email, PasswordHash, Activo FROM Usuarios WHERE Id = ?";
-        command.Parameters.Add(new OleDbParameter { Value = id });
+        command.AddParameter(id);
         connection.Open();
         using var reader = command.ExecuteReader();
         if (reader != null && reader.Read())
@@ -49,7 +49,7 @@ public class UsuarioRepository : IUsuarioRepository
         using var connection = _connectionFactory.CreateConnection();
         using var command = connection.CreateCommand();
         command.CommandText = "SELECT Id, Nombre, Email, PasswordHash, Activo FROM Usuarios WHERE Email = ?";
-        command.Parameters.Add(new OleDbParameter { Value = email });
+        command.AddParameter(email);
         connection.Open();
         using var reader = command.ExecuteReader();
         if (reader != null && reader.Read())
@@ -64,13 +64,13 @@ public class UsuarioRepository : IUsuarioRepository
         using var connection = _connectionFactory.CreateConnection();
         using var command = connection.CreateCommand();
         command.CommandText = "INSERT INTO Usuarios (Nombre, Email, PasswordHash, Activo) VALUES (?, ?, ?, ?)";
-        command.Parameters.Add(new OleDbParameter { Value = entity.Nombre });
-        command.Parameters.Add(new OleDbParameter { Value = entity.Email });
-        command.Parameters.Add(new OleDbParameter { Value = entity.PasswordHash });
-        command.Parameters.Add(new OleDbParameter { Value = entity.Activo });
+        command.AddParameter(entity.Nombre);
+        command.AddParameter(entity.Email);
+        command.AddParameter(entity.PasswordHash);
+        command.AddParameter(entity.Activo);
         connection.Open();
         command.ExecuteNonQuery();
-        command.CommandText = "SELECT @@IDENTITY";
+        command.CommandText = connection.GetIdentityQuery();
         var result = command.ExecuteScalar();
         return Task.FromResult(Convert.ToInt32(result));
     }
@@ -80,11 +80,11 @@ public class UsuarioRepository : IUsuarioRepository
         using var connection = _connectionFactory.CreateConnection();
         using var command = connection.CreateCommand();
         command.CommandText = "UPDATE Usuarios SET Nombre = ?, Email = ?, PasswordHash = ?, Activo = ? WHERE Id = ?";
-        command.Parameters.Add(new OleDbParameter { Value = entity.Nombre });
-        command.Parameters.Add(new OleDbParameter { Value = entity.Email });
-        command.Parameters.Add(new OleDbParameter { Value = entity.PasswordHash });
-        command.Parameters.Add(new OleDbParameter { Value = entity.Activo });
-        command.Parameters.Add(new OleDbParameter { Value = entity.Id });
+        command.AddParameter(entity.Nombre);
+        command.AddParameter(entity.Email);
+        command.AddParameter(entity.PasswordHash);
+        command.AddParameter(entity.Activo);
+        command.AddParameter(entity.Id);
         connection.Open();
         command.ExecuteNonQuery();
         return Task.CompletedTask;
@@ -95,7 +95,7 @@ public class UsuarioRepository : IUsuarioRepository
         using var connection = _connectionFactory.CreateConnection();
         using var command = connection.CreateCommand();
         command.CommandText = "DELETE FROM Usuarios WHERE Id = ?";
-        command.Parameters.Add(new OleDbParameter { Value = id });
+        command.AddParameter(id);
         connection.Open();
         command.ExecuteNonQuery();
         return Task.CompletedTask;
@@ -113,3 +113,4 @@ public class UsuarioRepository : IUsuarioRepository
         };
     }
 }
+

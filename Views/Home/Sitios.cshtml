@@ -1,16 +1,17 @@
 @model IReadOnlyList<Turismo.Domain.Entities.Sitio>
 
 @{
-    ViewData["Title"] = "Catálogo de Sitios Turísticos";
+    ViewData["Title"] = "Catalogo de Sitios Turisticos";
     var portadas = ViewBag.Portadas as Dictionary<int, string> ?? new Dictionary<int, string>();
     var ubicaciones = ViewBag.Ubicaciones as Dictionary<int, Turismo.Domain.Entities.Ubicacion?> ?? new Dictionary<int, Turismo.Domain.Entities.Ubicacion?>();
+    var ubicacionesCompletas = ViewBag.UbicacionesCompletas as Dictionary<int, string> ?? new Dictionary<int, string>();
     var rutas = ViewBag.Rutas as Dictionary<int, string> ?? new Dictionary<int, string>();
 }
 
 <div class="page-card mb-4">
     <div class="mb-4">
-        <h1 class="section-title mb-2">Catálogo de Sitios Turísticos</h1>
-        <p class="page-muted mb-0">Descubre los mejores destinos turísticos. Haz clic en cualquier sitio para ver más información.</p>
+        <h1 class="section-title mb-2">Catalogo de Sitios Turisticos</h1>
+        <p class="page-muted mb-0">Descubre destinos con imagenes, ubicacion jerarquica, actividades y referencias utiles para planificar la visita.</p>
     </div>
 </div>
 
@@ -27,7 +28,13 @@ else
         {
             var portada = portadas.TryGetValue(sitio.Id, out var urlPortada) ? urlPortada : null;
             var ubicacion = ubicaciones.TryGetValue(sitio.Id, out var ubicacionCatalogo) ? ubicacionCatalogo : null;
+            var ubicacionCompleta = ubicacionesCompletas.TryGetValue(sitio.Id, out var ubicacionRuta) ? ubicacionRuta : null;
             var ruta = rutas.TryGetValue(sitio.Id, out var rutaCatalogo) ? rutaCatalogo : null;
+            var actividades = (sitio.Actividades ?? string.Empty)
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Take(3)
+                .ToArray();
+
             <div class="col-md-6 col-lg-4">
                 <div class="page-card site-card h-100 d-flex flex-column position-relative">
                     @if (!string.IsNullOrWhiteSpace(portada))
@@ -38,25 +45,46 @@ else
                     {
                         <div class="site-card-placeholder">Sin imagen</div>
                     }
-                    <span class="soft-badge mb-2">@sitio.Estado</span>
-                    <h5 class="fw-bold mb-2">@sitio.Nombre</h5>
-                    @if (ubicacion != null)
-                    {
-                        <div class="text-muted small mb-2">
-                            <strong>@ubicacion.Tipo:</strong> @ubicacion.Nombre
-                        </div>
-                    }
-                    <p class="text-muted mb-3" style="font-size: 0.95rem; flex-grow: 1;">
-                        @(string.IsNullOrWhiteSpace(sitio.Descripcion) ? "Sin descripción disponible" : sitio.Descripcion)
-                    </p>
-                    <div class="d-flex flex-wrap gap-2">
-                        <a asp-action="SitioDetalle" asp-route-id="@sitio.Id" class="btn btn-sm btn-primary flex-grow-1">
-                            Ver Detalle
-                        </a>
-                        @if (!string.IsNullOrWhiteSpace(ruta))
+
+                    <div class="site-card-body d-flex flex-column h-100">
+                        <span class="soft-badge mb-2">@sitio.Estado</span>
+                        <h5 class="fw-bold mb-2">@sitio.Nombre</h5>
+
+                        @if (ubicacion != null)
                         {
-                            <a href="@ruta" class="btn btn-sm btn-outline-primary" target="_blank" rel="noopener noreferrer">Cómo llegar</a>
+                            <div class="text-muted small mb-2">
+                                <strong>@ubicacion.Tipo:</strong> @ubicacion.Nombre
+                            </div>
                         }
+
+                        @if (!string.IsNullOrWhiteSpace(ubicacionCompleta))
+                        {
+                            <div class="text-muted small site-card-location mb-3">@ubicacionCompleta</div>
+                        }
+
+                        @if (actividades.Length > 0)
+                        {
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                @foreach (var actividad in actividades)
+                                {
+                                    <span class="soft-badge activity-badge">@actividad</span>
+                                }
+                            </div>
+                        }
+
+                        <p class="text-muted mb-3 site-card-description">
+                            @(string.IsNullOrWhiteSpace(sitio.Descripcion) ? "Sin descripcion disponible." : sitio.Descripcion)
+                        </p>
+
+                        <div class="d-flex flex-wrap gap-2 mt-auto">
+                            <a asp-action="SitioDetalle" asp-route-id="@sitio.Id" class="btn btn-sm btn-primary flex-grow-1">
+                                Ver detalle
+                            </a>
+                            @if (!string.IsNullOrWhiteSpace(ruta))
+                            {
+                                <a href="@ruta" class="btn btn-sm btn-outline-primary" target="_blank" rel="noopener noreferrer">Como llegar</a>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
@@ -65,45 +93,10 @@ else
 }
 
 <style>
-.page-card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 250, 255, 0.95) 100%);
-    border: 1px solid rgba(59, 130, 246, 0.2);
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
-}
-
-.page-card:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    border-color: rgba(59, 130, 246, 0.3);
-}
-
-.soft-badge {
-    display: inline-block;
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    width: fit-content;
-}
-
-.section-title {
-    color: #1f2937;
-    font-size: 2rem;
-    font-weight: 700;
-}
-
-.page-muted {
-    color: #6b7280;
-    font-size: 1rem;
-}
-
 .site-card {
     overflow: hidden;
     padding: 0;
+    background: #fffdf8;
 }
 
 .site-card-image {
@@ -118,25 +111,28 @@ else
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
-    color: #2563eb;
+    background: linear-gradient(135deg, #dff3eb 0%, #fff4dc 100%);
+    color: #0a5f50;
     font-weight: 600;
 }
 
-.site-card .soft-badge,
-.site-card h5,
-.site-card p,
-.site-card .d-flex {
-    margin-left: 1.5rem;
-    margin-right: 1.5rem;
+.site-card-body {
+    padding: 1.5rem;
 }
 
-.site-card .d-flex {
-    margin-bottom: 1.5rem;
-    margin-top: auto;
+.site-card-location {
+    min-height: 3rem;
+    line-height: 1.4;
 }
 
-.site-card .text-muted.small {
-    line-height: 1.35;
+.site-card-description {
+    font-size: 0.95rem;
+    flex-grow: 1;
+}
+
+.activity-badge {
+    background: #fff1d6;
+    color: #8a4d12;
+    font-size: 0.78rem;
 }
 </style>

@@ -1,6 +1,6 @@
-using System.Data;
-using System.Data.OleDb;
+﻿using System.Data;
 using Turismo.Application.Interfaces;
+using Turismo.Infrastructure.Data;
 using Turismo.Domain.Entities;
 
 namespace Turismo.Infrastructure.Repositories;
@@ -38,7 +38,7 @@ public class UbicacionRepository : IUbicacionRepository
 
         using var command = connection.CreateCommand();
         command.CommandText = "SELECT * FROM Ubicacion WHERE Id = ?";
-        command.Parameters.Add(new OleDbParameter { Value = id });
+        command.AddParameter(id);
         using var reader = command.ExecuteReader();
         if (reader != null && reader.Read())
         {
@@ -58,26 +58,26 @@ public class UbicacionRepository : IUbicacionRepository
         {
             using var command = connection.CreateCommand();
             command.CommandText = "INSERT INTO Ubicacion (Nombre, Tipo, ParentId, Descripcion, Latitud, Longitud) VALUES (?, ?, ?, ?, ?, ?)";
-            command.Parameters.Add(new OleDbParameter { Value = entity.Nombre });
-            command.Parameters.Add(new OleDbParameter { Value = entity.Tipo });
-            command.Parameters.Add(new OleDbParameter { Value = (object?)entity.ParentId ?? DBNull.Value });
-            command.Parameters.Add(new OleDbParameter { Value = (object?)entity.Descripcion ?? DBNull.Value });
-            command.Parameters.Add(new OleDbParameter { Value = entity.Latitud.HasValue ? entity.Latitud.Value : DBNull.Value });
-            command.Parameters.Add(new OleDbParameter { Value = entity.Longitud.HasValue ? entity.Longitud.Value : DBNull.Value });
+            command.AddParameter(entity.Nombre);
+            command.AddParameter(entity.Tipo);
+            command.AddParameter((object?)entity.ParentId ?? DBNull.Value);
+            command.AddParameter((object?)entity.Descripcion ?? DBNull.Value);
+            command.AddParameter(entity.Latitud.HasValue ? entity.Latitud.Value : DBNull.Value);
+            command.AddParameter(entity.Longitud.HasValue ? entity.Longitud.Value : DBNull.Value);
             command.ExecuteNonQuery();
-            command.CommandText = "SELECT @@IDENTITY";
+            command.CommandText = connection.GetIdentityQuery();
             result = command.ExecuteScalar();
         }
-        catch (OleDbException)
+        catch (Exception) when (!connection.IsSqliteConnection())
         {
             using var fallbackCommand = connection.CreateCommand();
             fallbackCommand.CommandText = "INSERT INTO Ubicacion (Nombre, Tipo, ParentId, Descripcion) VALUES (?, ?, ?, ?)";
-            fallbackCommand.Parameters.Add(new OleDbParameter { Value = entity.Nombre });
-            fallbackCommand.Parameters.Add(new OleDbParameter { Value = entity.Tipo });
-            fallbackCommand.Parameters.Add(new OleDbParameter { Value = (object?)entity.ParentId ?? DBNull.Value });
-            fallbackCommand.Parameters.Add(new OleDbParameter { Value = (object?)entity.Descripcion ?? DBNull.Value });
+            fallbackCommand.AddParameter(entity.Nombre);
+            fallbackCommand.AddParameter(entity.Tipo);
+            fallbackCommand.AddParameter((object?)entity.ParentId ?? DBNull.Value);
+            fallbackCommand.AddParameter((object?)entity.Descripcion ?? DBNull.Value);
             fallbackCommand.ExecuteNonQuery();
-            fallbackCommand.CommandText = "SELECT @@IDENTITY";
+            fallbackCommand.CommandText = connection.GetIdentityQuery();
             result = fallbackCommand.ExecuteScalar();
         }
 
@@ -93,24 +93,24 @@ public class UbicacionRepository : IUbicacionRepository
         {
             using var command = connection.CreateCommand();
             command.CommandText = "UPDATE Ubicacion SET Nombre = ?, Tipo = ?, ParentId = ?, Descripcion = ?, Latitud = ?, Longitud = ? WHERE Id = ?";
-            command.Parameters.Add(new OleDbParameter { Value = entity.Nombre });
-            command.Parameters.Add(new OleDbParameter { Value = entity.Tipo });
-            command.Parameters.Add(new OleDbParameter { Value = (object?)entity.ParentId ?? DBNull.Value });
-            command.Parameters.Add(new OleDbParameter { Value = (object?)entity.Descripcion ?? DBNull.Value });
-            command.Parameters.Add(new OleDbParameter { Value = entity.Latitud.HasValue ? entity.Latitud.Value : DBNull.Value });
-            command.Parameters.Add(new OleDbParameter { Value = entity.Longitud.HasValue ? entity.Longitud.Value : DBNull.Value });
-            command.Parameters.Add(new OleDbParameter { Value = entity.Id });
+            command.AddParameter(entity.Nombre);
+            command.AddParameter(entity.Tipo);
+            command.AddParameter((object?)entity.ParentId ?? DBNull.Value);
+            command.AddParameter((object?)entity.Descripcion ?? DBNull.Value);
+            command.AddParameter(entity.Latitud.HasValue ? entity.Latitud.Value : DBNull.Value);
+            command.AddParameter(entity.Longitud.HasValue ? entity.Longitud.Value : DBNull.Value);
+            command.AddParameter(entity.Id);
             command.ExecuteNonQuery();
         }
-        catch (OleDbException)
+        catch (Exception) when (!connection.IsSqliteConnection())
         {
             using var fallbackCommand = connection.CreateCommand();
             fallbackCommand.CommandText = "UPDATE Ubicacion SET Nombre = ?, Tipo = ?, ParentId = ?, Descripcion = ? WHERE Id = ?";
-            fallbackCommand.Parameters.Add(new OleDbParameter { Value = entity.Nombre });
-            fallbackCommand.Parameters.Add(new OleDbParameter { Value = entity.Tipo });
-            fallbackCommand.Parameters.Add(new OleDbParameter { Value = (object?)entity.ParentId ?? DBNull.Value });
-            fallbackCommand.Parameters.Add(new OleDbParameter { Value = (object?)entity.Descripcion ?? DBNull.Value });
-            fallbackCommand.Parameters.Add(new OleDbParameter { Value = entity.Id });
+            fallbackCommand.AddParameter(entity.Nombre);
+            fallbackCommand.AddParameter(entity.Tipo);
+            fallbackCommand.AddParameter((object?)entity.ParentId ?? DBNull.Value);
+            fallbackCommand.AddParameter((object?)entity.Descripcion ?? DBNull.Value);
+            fallbackCommand.AddParameter(entity.Id);
             fallbackCommand.ExecuteNonQuery();
         }
 
@@ -122,7 +122,7 @@ public class UbicacionRepository : IUbicacionRepository
         using var connection = _connectionFactory.CreateConnection();
         using var command = connection.CreateCommand();
         command.CommandText = "DELETE FROM Ubicacion WHERE Id = ?";
-        command.Parameters.Add(new OleDbParameter { Value = id });
+        command.AddParameter(id);
         connection.Open();
         command.ExecuteNonQuery();
         return Task.CompletedTask;
@@ -177,3 +177,4 @@ public class UbicacionRepository : IUbicacionRepository
             : null;
     }
 }
+

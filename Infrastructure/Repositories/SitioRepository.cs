@@ -1,6 +1,6 @@
-using System.Data;
-using System.Data.OleDb;
+﻿using System.Data;
 using Turismo.Application.Interfaces;
+using Turismo.Infrastructure.Data;
 using Turismo.Domain.Entities;
 
 namespace Turismo.Infrastructure.Repositories;
@@ -19,7 +19,7 @@ public class SitioRepository : ISitioRepository
         var results = new List<Sitio>();
         using var connection = _connectionFactory.CreateConnection();
         using var command = connection.CreateCommand();
-        command.CommandText = "SELECT Id, Nombre, Descripcion, UbicacionId, Estado, FechaCreacion FROM Sitio";
+        command.CommandText = "SELECT * FROM Sitio";
         connection.Open();
         using var reader = command.ExecuteReader();
         while (reader != null && reader.Read())
@@ -33,8 +33,8 @@ public class SitioRepository : ISitioRepository
     {
         using var connection = _connectionFactory.CreateConnection();
         using var command = connection.CreateCommand();
-        command.CommandText = "SELECT Id, Nombre, Descripcion, UbicacionId, Estado, FechaCreacion FROM Sitio WHERE Id = ?";
-        command.Parameters.Add(new OleDbParameter { Value = id });
+        command.CommandText = "SELECT * FROM Sitio WHERE Id = ?";
+        command.AddParameter(id);
         connection.Open();
         using var reader = command.ExecuteReader();
         if (reader != null && reader.Read())
@@ -49,8 +49,8 @@ public class SitioRepository : ISitioRepository
         var results = new List<Sitio>();
         using var connection = _connectionFactory.CreateConnection();
         using var command = connection.CreateCommand();
-        command.CommandText = "SELECT Id, Nombre, Descripcion, UbicacionId, Estado, FechaCreacion FROM Sitio WHERE UbicacionId = ?";
-        command.Parameters.Add(new OleDbParameter { Value = ubicacionId });
+        command.CommandText = "SELECT * FROM Sitio WHERE UbicacionId = ?";
+        command.AddParameter(ubicacionId);
         connection.Open();
         using var reader = command.ExecuteReader();
         while (reader != null && reader.Read())
@@ -63,33 +63,71 @@ public class SitioRepository : ISitioRepository
     public Task<int> CreateAsync(Sitio entity)
     {
         using var connection = _connectionFactory.CreateConnection();
-        using var command = connection.CreateCommand();
-        command.CommandText = "INSERT INTO Sitio (Nombre, Descripcion, UbicacionId, Estado, FechaCreacion) VALUES (?, ?, ?, ?, ?)";
-        command.Parameters.Add(new OleDbParameter { Value = entity.Nombre });
-        command.Parameters.Add(new OleDbParameter { Value = (object?)entity.Descripcion ?? DBNull.Value });
-        command.Parameters.Add(new OleDbParameter { Value = entity.UbicacionId });
-        command.Parameters.Add(new OleDbParameter { Value = entity.Estado });
-        command.Parameters.Add(new OleDbParameter { Value = entity.FechaCreacion });
         connection.Open();
-        command.ExecuteNonQuery();
-        command.CommandText = "SELECT @@IDENTITY";
-        var result = command.ExecuteScalar();
+
+        object? result;
+        try
+        {
+            using var command = connection.CreateCommand();
+            command.CommandText = "INSERT INTO Sitio (Nombre, Descripcion, Actividades, UbicacionId, Estado, FechaCreacion) VALUES (?, ?, ?, ?, ?, ?)";
+            command.AddParameter(entity.Nombre);
+            command.AddParameter((object?)entity.Descripcion ?? DBNull.Value);
+            command.AddParameter((object?)entity.Actividades ?? DBNull.Value);
+            command.AddParameter(entity.UbicacionId);
+            command.AddParameter(entity.Estado);
+            command.AddParameter(entity.FechaCreacion);
+            command.ExecuteNonQuery();
+            command.CommandText = connection.GetIdentityQuery();
+            result = command.ExecuteScalar();
+        }
+        catch (Exception) when (!connection.IsSqliteConnection())
+        {
+            using var fallbackCommand = connection.CreateCommand();
+            fallbackCommand.CommandText = "INSERT INTO Sitio (Nombre, Descripcion, UbicacionId, Estado, FechaCreacion) VALUES (?, ?, ?, ?, ?)";
+            fallbackCommand.AddParameter(entity.Nombre);
+            fallbackCommand.AddParameter((object?)entity.Descripcion ?? DBNull.Value);
+            fallbackCommand.AddParameter(entity.UbicacionId);
+            fallbackCommand.AddParameter(entity.Estado);
+            fallbackCommand.AddParameter(entity.FechaCreacion);
+            fallbackCommand.ExecuteNonQuery();
+            fallbackCommand.CommandText = connection.GetIdentityQuery();
+            result = fallbackCommand.ExecuteScalar();
+        }
+
         return Task.FromResult(Convert.ToInt32(result));
     }
 
     public Task UpdateAsync(Sitio entity)
     {
         using var connection = _connectionFactory.CreateConnection();
-        using var command = connection.CreateCommand();
-        command.CommandText = "UPDATE Sitio SET Nombre = ?, Descripcion = ?, UbicacionId = ?, Estado = ?, FechaCreacion = ? WHERE Id = ?";
-        command.Parameters.Add(new OleDbParameter { Value = entity.Nombre });
-        command.Parameters.Add(new OleDbParameter { Value = (object?)entity.Descripcion ?? DBNull.Value });
-        command.Parameters.Add(new OleDbParameter { Value = entity.UbicacionId });
-        command.Parameters.Add(new OleDbParameter { Value = entity.Estado });
-        command.Parameters.Add(new OleDbParameter { Value = entity.FechaCreacion });
-        command.Parameters.Add(new OleDbParameter { Value = entity.Id });
         connection.Open();
-        command.ExecuteNonQuery();
+
+        try
+        {
+            using var command = connection.CreateCommand();
+            command.CommandText = "UPDATE Sitio SET Nombre = ?, Descripcion = ?, Actividades = ?, UbicacionId = ?, Estado = ?, FechaCreacion = ? WHERE Id = ?";
+            command.AddParameter(entity.Nombre);
+            command.AddParameter((object?)entity.Descripcion ?? DBNull.Value);
+            command.AddParameter((object?)entity.Actividades ?? DBNull.Value);
+            command.AddParameter(entity.UbicacionId);
+            command.AddParameter(entity.Estado);
+            command.AddParameter(entity.FechaCreacion);
+            command.AddParameter(entity.Id);
+            command.ExecuteNonQuery();
+        }
+        catch (Exception) when (!connection.IsSqliteConnection())
+        {
+            using var fallbackCommand = connection.CreateCommand();
+            fallbackCommand.CommandText = "UPDATE Sitio SET Nombre = ?, Descripcion = ?, UbicacionId = ?, Estado = ?, FechaCreacion = ? WHERE Id = ?";
+            fallbackCommand.AddParameter(entity.Nombre);
+            fallbackCommand.AddParameter((object?)entity.Descripcion ?? DBNull.Value);
+            fallbackCommand.AddParameter(entity.UbicacionId);
+            fallbackCommand.AddParameter(entity.Estado);
+            fallbackCommand.AddParameter(entity.FechaCreacion);
+            fallbackCommand.AddParameter(entity.Id);
+            fallbackCommand.ExecuteNonQuery();
+        }
+
         return Task.CompletedTask;
     }
 
@@ -98,7 +136,7 @@ public class SitioRepository : ISitioRepository
         using var connection = _connectionFactory.CreateConnection();
         using var command = connection.CreateCommand();
         command.CommandText = "DELETE FROM Sitio WHERE Id = ?";
-        command.Parameters.Add(new OleDbParameter { Value = id });
+        command.AddParameter(id);
         connection.Open();
         command.ExecuteNonQuery();
         return Task.CompletedTask;
@@ -106,14 +144,40 @@ public class SitioRepository : ISitioRepository
 
     private static Sitio Map(IDataRecord record)
     {
+        var actividadesOrdinal = TryGetOrdinal(record, "Actividades");
+
         return new Sitio
         {
-            Id = record.GetInt32(0),
-            Nombre = record.GetString(1),
-            Descripcion = record.IsDBNull(2) ? null : record.GetString(2),
-            UbicacionId = record.GetInt32(3),
-            Estado = record.GetString(4),
-            FechaCreacion = record.GetDateTime(5)
+            Id = record.GetInt32(record.GetOrdinal("Id")),
+            Nombre = record.GetString(record.GetOrdinal("Nombre")),
+            Descripcion = ReadNullableString(record, "Descripcion"),
+            Actividades = actividadesOrdinal.HasValue && !record.IsDBNull(actividadesOrdinal.Value)
+                ? Convert.ToString(record.GetValue(actividadesOrdinal.Value))
+                : null,
+            UbicacionId = record.GetInt32(record.GetOrdinal("UbicacionId")),
+            Estado = record.GetString(record.GetOrdinal("Estado")),
+            FechaCreacion = record.GetDateTime(record.GetOrdinal("FechaCreacion"))
         };
     }
+
+    private static int? TryGetOrdinal(IDataRecord record, string columnName)
+    {
+        try
+        {
+            return record.GetOrdinal(columnName);
+        }
+        catch (IndexOutOfRangeException)
+        {
+            return null;
+        }
+    }
+
+    private static string? ReadNullableString(IDataRecord record, string columnName)
+    {
+        var ordinal = TryGetOrdinal(record, columnName);
+        return ordinal.HasValue && !record.IsDBNull(ordinal.Value)
+            ? Convert.ToString(record.GetValue(ordinal.Value))
+            : null;
+    }
 }
+

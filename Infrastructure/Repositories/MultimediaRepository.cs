@@ -1,6 +1,6 @@
-using System.Data;
-using System.Data.OleDb;
+﻿using System.Data;
 using Turismo.Application.Interfaces;
+using Turismo.Infrastructure.Data;
 using Turismo.Domain.Entities;
 
 namespace Turismo.Infrastructure.Repositories;
@@ -20,7 +20,7 @@ public class MultimediaRepository : IMultimediaRepository
         using var connection = _connectionFactory.CreateConnection();
         using var command = connection.CreateCommand();
         command.CommandText = "SELECT Id, SitioId, Url, Tipo, Orden FROM Multimedia WHERE SitioId = ? ORDER BY Orden, Id";
-        command.Parameters.Add(new OleDbParameter { Value = sitioId });
+        command.AddParameter(sitioId);
         connection.Open();
         using var reader = command.ExecuteReader();
         while (reader != null && reader.Read())
@@ -36,7 +36,7 @@ public class MultimediaRepository : IMultimediaRepository
         using var connection = _connectionFactory.CreateConnection();
         using var command = connection.CreateCommand();
         command.CommandText = "SELECT Id, SitioId, Url, Tipo, Orden FROM Multimedia WHERE Id = ?";
-        command.Parameters.Add(new OleDbParameter { Value = id });
+        command.AddParameter(id);
         connection.Open();
         using var reader = command.ExecuteReader();
         if (reader != null && reader.Read())
@@ -52,13 +52,13 @@ public class MultimediaRepository : IMultimediaRepository
         using var connection = _connectionFactory.CreateConnection();
         using var command = connection.CreateCommand();
         command.CommandText = "INSERT INTO Multimedia (SitioId, Url, Tipo, Orden) VALUES (?, ?, ?, ?)";
-        command.Parameters.Add(new OleDbParameter { Value = entity.SitioId });
-        command.Parameters.Add(new OleDbParameter { Value = entity.Url });
-        command.Parameters.Add(new OleDbParameter { Value = entity.Tipo });
-        command.Parameters.Add(new OleDbParameter { Value = entity.Orden });
+        command.AddParameter(entity.SitioId);
+        command.AddParameter(entity.Url);
+        command.AddParameter(entity.Tipo);
+        command.AddParameter(entity.Orden);
         connection.Open();
         command.ExecuteNonQuery();
-        command.CommandText = "SELECT @@IDENTITY";
+        command.CommandText = connection.GetIdentityQuery();
         var result = command.ExecuteScalar();
         return Task.FromResult(Convert.ToInt32(result));
     }
@@ -68,7 +68,7 @@ public class MultimediaRepository : IMultimediaRepository
         using var connection = _connectionFactory.CreateConnection();
         using var command = connection.CreateCommand();
         command.CommandText = "DELETE FROM Multimedia WHERE Id = ?";
-        command.Parameters.Add(new OleDbParameter { Value = id });
+        command.AddParameter(id);
         connection.Open();
         command.ExecuteNonQuery();
         return Task.CompletedTask;

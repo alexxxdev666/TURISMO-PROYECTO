@@ -4,13 +4,14 @@ using Turismo.Infrastructure.Data;
 using Turismo.Infrastructure.Repositories;
 using Turismo.Domain.Entities;
 using Turismo.Security;
+using System.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddSingleton<IDbConnectionFactory, OleDbConnectionFactory>();
+builder.Services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
 builder.Services.AddScoped<IUbicacionRepository, UbicacionRepository>();
 builder.Services.AddScoped<ISitioRepository, SitioRepository>();
 builder.Services.AddScoped<IMultimediaRepository, MultimediaRepository>();
@@ -35,6 +36,7 @@ var app = builder.Build();
 
 AppDomain.CurrentDomain.SetData("DataDirectory", Path.Combine(builder.Environment.ContentRootPath, "data"));
 
+await EnsureDatabaseAsync(app.Services, builder.Environment.ContentRootPath);
 await SeedAdminUserAsync(app.Services);
 
 // Configure the HTTP request pipeline.
@@ -59,6 +61,47 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+static Task EnsureDatabaseAsync(IServiceProvider serviceProvider, string contentRootPath)
+{
+    using var scope = serviceProvider.CreateScope();
+    var connectionFactory = scope.ServiceProvider.GetRequiredService<IDbConnectionFactory>();
+
+    if (!connectionFactory.IsSqlite)
+    {
+        return Task.CompletedTask;
+    }
+
+    Directory.CreateDirectory(Path.Combine(contentRootPath, "data"));
+
+    using var connection = connectionFactory.CreateConnection();
+    connection.Open();
+
+    ExecuteSqlFile(connection, Path.Combine(contentRootPath, "data", "sqlite-schema.sql"));
+
+    using var countCommand = connection.CreateCommand();
+    countCommand.CommandText = "SELECT COUNT(*) FROM Sitio";
+    var sitiosCount = Convert.ToInt32(countCommand.ExecuteScalar());
+
+    if (sitiosCount == 0)
+    {
+        ExecuteSqlFile(connection, Path.Combine(contentRootPath, "data", "sqlite-seed.sql"));
+    }
+
+    return Task.CompletedTask;
+}
+
+static void ExecuteSqlFile(IDbConnection connection, string path)
+{
+    if (!File.Exists(path))
+    {
+        return;
+    }
+
+    using var command = connection.CreateCommand();
+    command.CommandText = File.ReadAllText(path);
+    command.ExecuteNonQuery();
+}
 
 static async Task SeedAdminUserAsync(IServiceProvider serviceProvider)
 {

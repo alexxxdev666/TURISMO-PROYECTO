@@ -54,8 +54,11 @@ public class HomeController : Controller
     public async Task<IActionResult> Sitios()
     {
         var sitios = await _sitioService.GetAllAsync();
+        var ubicacionesCatalogo = await _ubicacionService.GetAllAsync();
+        var ubicacionesPorId = ubicacionesCatalogo.ToDictionary(ubicacion => ubicacion.Id);
         var portadas = new Dictionary<int, string>();
         var ubicaciones = new Dictionary<int, Turismo.Domain.Entities.Ubicacion?>();
+        var ubicacionesCompletas = new Dictionary<int, string>();
         var rutas = new Dictionary<int, string>();
 
         foreach (var sitio in sitios)
@@ -67,8 +70,12 @@ public class HomeController : Controller
                 portadas[sitio.Id] = portada.Url;
             }
 
-            var ubicacion = await _ubicacionService.GetByIdAsync(sitio.UbicacionId);
+            ubicacionesPorId.TryGetValue(sitio.UbicacionId, out var ubicacion);
             ubicaciones[sitio.Id] = ubicacion;
+            if (ubicacion != null)
+            {
+                ubicacionesCompletas[sitio.Id] = BuildUbicacionCompleta(ubicacion, ubicacionesCatalogo);
+            }
 
             if (ubicacion?.Latitud.HasValue == true && ubicacion.Longitud.HasValue)
             {
@@ -78,6 +85,7 @@ public class HomeController : Controller
 
         ViewBag.Portadas = portadas;
         ViewBag.Ubicaciones = ubicaciones;
+        ViewBag.UbicacionesCompletas = ubicacionesCompletas;
         ViewBag.Rutas = rutas;
         return View(sitios);
     }
@@ -93,6 +101,7 @@ public class HomeController : Controller
 
         // Obtener ubicación
         var ubicacion = await _ubicacionService.GetByIdAsync(sitio.UbicacionId);
+        var ubicacionesCatalogo = await _ubicacionService.GetAllAsync();
         
         // Obtener costos
         var costosSitio = (await _costoService.GetBySitioAsync(id)).ToList();
@@ -109,6 +118,7 @@ public class HomeController : Controller
         var imagenes = await _multimediaService.GetBySitioAsync(id);
 
         ViewBag.Ubicacion = ubicacion;
+        ViewBag.UbicacionCompleta = ubicacion == null ? null : BuildUbicacionCompleta(ubicacion, ubicacionesCatalogo);
         ViewBag.Costos = costosSitio;
         ViewBag.Comidas = comidas;
         ViewBag.ComidaNombres = comidaCatalogo;
@@ -179,5 +189,32 @@ public class HomeController : Controller
         }
 
         return (promedioPersona, promedioCostos, promedioComidas, valoresCostos.Count, valoresComidas.Count);
+    }
+
+    private static string BuildUbicacionCompleta(
+        Turismo.Domain.Entities.Ubicacion ubicacion,
+        IReadOnlyList<Turismo.Domain.Entities.Ubicacion> ubicaciones)
+    {
+        var nombres = new List<string>();
+        var actual = ubicacion;
+
+        while (actual != null)
+        {
+            if (!string.IsNullOrWhiteSpace(actual.Nombre))
+            {
+                nombres.Add(actual.Nombre);
+            }
+
+            if (!actual.ParentId.HasValue)
+            {
+                break;
+            }
+
+            actual = ubicaciones.FirstOrDefault(item => item.Id == actual.ParentId.Value);
+        }
+
+        nombres.Reverse();
+        nombres.Insert(0, "Ecuador");
+        return string.Join(" > ", nombres);
     }
 }

@@ -2,84 +2,169 @@
 
 @{
     ViewData["Title"] = Model.Nombre;
+
     var ubicacion = ViewBag.Ubicacion as Turismo.Domain.Entities.Ubicacion;
+    var ubicacionCompleta = ViewBag.UbicacionCompleta as string;
     var latitud = ubicacion?.Latitud;
     var longitud = ubicacion?.Longitud;
     var tieneCoordenadas = latitud.HasValue && longitud.HasValue;
-    var costos = ViewBag.Costos as List<Turismo.Domain.Entities.Costo> ?? new();
-    var comidas = ViewBag.Comidas as List<Turismo.Domain.Entities.SitioComida> ?? new();
+    var latitudTexto = latitud?.ToString("0.000000") ?? string.Empty;
+    var longitudTexto = longitud?.ToString("0.000000") ?? string.Empty;
+    var latitudRuta = latitud?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? string.Empty;
+    var longitudRuta = longitud?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? string.Empty;
+
+    var costos = ViewBag.Costos as IReadOnlyList<Turismo.Domain.Entities.Costo> ?? Array.Empty<Turismo.Domain.Entities.Costo>();
+    var comidas = ViewBag.Comidas as IReadOnlyList<Turismo.Domain.Entities.SitioComida> ?? Array.Empty<Turismo.Domain.Entities.SitioComida>();
     var comidaNombres = ViewBag.ComidaNombres as Dictionary<int, string> ?? new Dictionary<int, string>();
     var portadasComidas = ViewBag.PortadasComidas as Dictionary<int, string?> ?? new Dictionary<int, string?>();
     var imagenes = ViewBag.Imagenes as IReadOnlyList<Turismo.Domain.Entities.Multimedia> ?? Array.Empty<Turismo.Domain.Entities.Multimedia>();
-    var promedioPersona = ViewBag.PromedioPersona as decimal? ?? 0m;
-    var promedioCostos = ViewBag.PromedioCostos as decimal? ?? 0m;
-    var promedioComidas = ViewBag.PromedioComidas as decimal? ?? 0m;
-    var cantidadCostosPromediados = ViewBag.CantidadCostosPromediados as int? ?? 0;
-    var cantidadComidasPromediadas = ViewBag.CantidadComidasPromediados as int? ?? 0;
+
+    var promedioPersona = ViewBag.PromedioPersona is decimal promedioPersonaValue ? promedioPersonaValue : 0m;
+    var promedioCostos = ViewBag.PromedioCostos is decimal promedioCostosValue ? promedioCostosValue : 0m;
+    var promedioComidas = ViewBag.PromedioComidas is decimal promedioComidasValue ? promedioComidasValue : 0m;
+    var cantidadCostosPromediados = ViewBag.CantidadCostosPromediados is int cantidadCostosValue ? cantidadCostosValue : 0;
+    var cantidadComidasPromediadas = ViewBag.CantidadComidasPromediadas is int cantidadComidasValue ? cantidadComidasValue : 0;
+
+    var actividades = (Model.Actividades ?? string.Empty)
+        .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
     var usd = new System.Globalization.CultureInfo("en-US");
+    var fechaCuraduria = "10/06/2026";
 }
 
 <div class="mb-4">
     <a href="@Url.Action("Sitios", "Home")" class="btn btn-outline-primary btn-sm mb-3">
-        ← Volver al Catálogo
+        Volver al catalogo
     </a>
 </div>
 
-<div class="page-card mb-4">
-    <div class="row">
-        <div class="col-md-8">
-            <h1 class="section-title mb-2">@Model.Nombre</h1>
-            <span class="soft-badge mb-3">@Model.Estado</span>
-            
+<div class="page-card detail-hero mb-4">
+    <div class="d-flex flex-column flex-lg-row justify-content-between gap-4">
+        <div class="flex-grow-1">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <span class="soft-badge">@Model.Estado</span>
+                <span class="soft-badge soft-badge-light">Actualizado @fechaCuraduria</span>
+            </div>
+
+            <h1 class="section-title mb-3">@Model.Nombre</h1>
+
             @if (!string.IsNullOrWhiteSpace(Model.Descripcion))
             {
-                <p class="page-muted mb-3">@Model.Descripcion</p>
+                <p class="page-muted mb-4">@Model.Descripcion</p>
             }
 
-            @if (ubicacion != null)
+            @if (actividades.Length > 0)
             {
                 <div class="mb-3">
-                    <h6 class="fw-bold text-muted">📍 Ubicación</h6>
-                    <p class="mb-0">
-                        <strong>@ubicacion.Tipo:</strong> @ubicacion.Nombre
-                    </p>
-                    @if (tieneCoordenadas)
-                    {
-                        <p class="text-muted small mb-2">Coordenadas: @latitud.Value.ToString("0.000000"), @longitud.Value.ToString("0.000000")</p>
-                    }
-                    <div class="d-flex flex-wrap gap-2 mt-2">
-                        @if (tieneCoordenadas)
+                    <h6 class="eyebrow mb-2">Actividades recomendadas</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (var actividad in actividades)
                         {
-                            <a class="btn btn-outline-primary btn-sm" href="https://www.google.com/maps/dir/?api=1&destination=@latitud.Value.ToString(System.Globalization.CultureInfo.InvariantCulture),@longitud.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)" target="_blank" rel="noopener noreferrer">Cómo llegar</a>
-                            <a class="btn btn-outline-secondary btn-sm" href="#mapaSitio">Ver mapa</a>
+                            <span class="soft-badge activity-badge">@actividad</span>
                         }
                     </div>
                 </div>
             }
+        </div>
 
-            <div class="d-flex flex-wrap gap-2 mt-3">
-                <span class="soft-badge">@comidas.Count platos asociados</span>
-                <span class="soft-badge">@costos.Count costos</span>
-                <span class="soft-badge">@imagenes.Count imágenes</span>
+        <div class="detail-summary">
+            <div class="summary-tile">
+                <span class="summary-value">@imagenes.Count</span>
+                <span class="summary-label">Imagenes</span>
             </div>
-
-            <div class="mb-3">
-                <h6 class="fw-bold text-muted">📅 Creado</h6>
-                <p class="mb-0">@Model.FechaCreacion.ToShortDateString()</p>
+            <div class="summary-tile">
+                <span class="summary-value">@costos.Count</span>
+                <span class="summary-label">Costos</span>
+            </div>
+            <div class="summary-tile">
+                <span class="summary-value">@comidas.Count</span>
+                <span class="summary-label">Platos</span>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Galería de Imágenes -->
 <div class="page-card mb-4">
-    <h5 class="fw-bold mb-3">📸 Galería</h5>
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <h5 class="fw-bold mb-3">Ubicacion del destino</h5>
+
+            @if (ubicacion != null)
+            {
+                <div class="detail-list">
+                    <div class="detail-item">
+                        <span class="detail-label">Punto exacto</span>
+                        <span class="detail-value">@ubicacion.Tipo: @ubicacion.Nombre</span>
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(ubicacionCompleta))
+                    {
+                        <div class="detail-item">
+                            <span class="detail-label">Ruta geografica</span>
+                            <span class="detail-value">@ubicacionCompleta</span>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(ubicacion.Descripcion))
+                    {
+                        <div class="detail-item">
+                            <span class="detail-label">Referencia</span>
+                            <span class="detail-value">@ubicacion.Descripcion</span>
+                        </div>
+                    }
+
+                    @if (tieneCoordenadas)
+                    {
+                        <div class="detail-item">
+                            <span class="detail-label">Coordenadas</span>
+                            <span class="detail-value">@latitudTexto, @longitudTexto</span>
+                        </div>
+                    }
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mt-3">
+                    @if (tieneCoordenadas)
+                    {
+                        <a class="btn btn-primary btn-sm" href="https://www.google.com/maps/dir/?api=1&destination=@latitudRuta,@longitudRuta" target="_blank" rel="noopener noreferrer">Como llegar</a>
+                        <a class="btn btn-outline-secondary btn-sm" href="#mapaSitio">Ver mapa</a>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">Este sitio aun no tiene una ubicacion detallada registrada.</div>
+            }
+        </div>
+
+        <div class="col-lg-4">
+            <div class="price-callout">
+                <span class="eyebrow">Promedio estimado por persona</span>
+                <div class="price-value">@promedioPersona.ToString("C", usd)</div>
+                <p class="text-muted small mb-2">Promedio entre costos del sitio y platos asociados con precio disponible.</p>
+                <p class="text-muted small mb-0">
+                    Costos (@cantidadCostosPromediados): <strong>@promedioCostos.ToString("C", usd)</strong><br />
+                    Comidas (@cantidadComidasPromediadas): <strong>@promedioComidas.ToString("C", usd)</strong>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-card mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
+        <div>
+            <h5 class="fw-bold mb-1">Galeria del sitio</h5>
+            <p class="text-muted mb-0">Imagenes curadas para este destino.</p>
+        </div>
+        <span class="soft-badge soft-badge-light">@imagenes.Count imagenes</span>
+    </div>
+
     @if (imagenes.Any())
     {
         <div class="row g-3">
             @foreach (var imagen in imagenes)
             {
-                <div class="col-12 col-md-6 col-lg-4">
+                <div class="col-12 col-md-6 col-xl-4">
                     <div class="gallery-card h-100">
                         <img src="@imagen.Url" alt="Imagen de @Model.Nombre" class="gallery-image" />
                     </div>
@@ -89,27 +174,35 @@
     }
     else
     {
-        <p class="text-muted mb-0">Este sitio aún no tiene imágenes publicadas.</p>
+        <div class="empty-state">Este sitio aun no tiene imagenes publicadas.</div>
     }
 </div>
 
-<!-- Platos Disponibles -->
 <div class="page-card mb-4">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
         <div>
-            <h5 class="fw-bold mb-1">🍽️ Platos disponibles</h5>
-            <p class="text-muted mb-0">Platos y referencias gastronómicas asociadas a este sitio.</p>
+            <h5 class="fw-bold mb-1">Gastronomia asociada</h5>
+            <p class="text-muted mb-0">Valores referenciales consultados en linea el @fechaCuraduria.</p>
         </div>
-        <span class="soft-badge">@comidas.Count registrados</span>
+        <span class="soft-badge soft-badge-light">@comidas.Count platos registrados</span>
     </div>
+
     @if (comidas.Any())
     {
         <div class="row g-3">
             @foreach (var comida in comidas)
             {
-                var nombre = comidaNombres.TryGetValue(comida.ComidaId, out var nombreComida) ? nombreComida : $"Plato #{comida.ComidaId}";
-                var portada = portadasComidas.TryGetValue(comida.ComidaId, out var url) ? url : null;
-                <div class="col-12 col-md-6 col-lg-4">
+                var nombre = comidaNombres.TryGetValue(comida.ComidaId, out var nombreComida)
+                    ? nombreComida
+                    : $"Plato #{comida.ComidaId}";
+                var portada = portadasComidas.TryGetValue(comida.ComidaId, out var urlPortadaComida)
+                    ? urlPortadaComida
+                    : null;
+                var precio = comida.ValorReferencial.HasValue
+                    ? comida.ValorReferencial.Value.ToString("C", usd)
+                    : "Sin precio";
+
+                <div class="col-12 col-md-6 col-xl-4">
                     <div class="food-card h-100">
                         @if (!string.IsNullOrWhiteSpace(portada))
                         {
@@ -119,15 +212,17 @@
                         {
                             <div class="food-placeholder">Sin imagen</div>
                         }
-                        <div class="food-title">
+
+                        <div class="food-body">
                             <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
                                 <div class="fw-semibold">@nombre</div>
-                                <span class="soft-badge">@((comida.ValorReferencial ?? 0m).ToString("C"))</span>
+                                <span class="soft-badge">@precio</span>
                             </div>
-                            <div class="text-muted small mb-1">Valor referencial por persona</div>
+                            <div class="text-muted small">Valor referencial por porcion o consumo individual.</div>
+
                             @if (!string.IsNullOrWhiteSpace(comida.Observacion))
                             {
-                                <div class="text-muted small mt-2">@comida.Observacion</div>
+                                <div class="food-note mt-3">@comida.Observacion</div>
                             }
                         </div>
                     </div>
@@ -141,43 +236,15 @@
     }
 </div>
 
-<!-- Mapa del sitio -->
-<div class="page-card mb-4" id="mapaSitio">
+<div class="page-card mb-4">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
         <div>
-            <h5 class="fw-bold mb-1">🗺️ Mapa interactivo</h5>
-            <p class="text-muted mb-0">Ubicación exacta del sitio basada en coordenadas.</p>
+            <h5 class="fw-bold mb-1">Costos y tarifas</h5>
+            <p class="text-muted mb-0">Referencias de entrada y actividades consultadas el @fechaCuraduria.</p>
         </div>
-        @if (tieneCoordenadas)
-        {
-            <span class="soft-badge">Leaflet + OpenStreetMap</span>
-        }
+        <span class="soft-badge soft-badge-light">@costos.Count registros</span>
     </div>
 
-    @if (tieneCoordenadas)
-    {
-        <div id="publicSiteMap" class="route-map" data-lat="@latitud" data-lon="@longitud"></div>
-    }
-    else
-    {
-        <div class="empty-state">Este sitio todavía no tiene coordenadas registradas para mostrar el mapa.</div>
-    }
-</div>
-
-<!-- Promedio por persona -->
-<div class="page-card mb-4">
-    <h5 class="fw-bold mb-2">📊 Promedio estimado por persona</h5>
-    <p class="mb-0 fs-4 fw-semibold text-primary">@promedioPersona.ToString("C", usd)</p>
-    <p class="text-muted mb-1">Calculado con el promedio de costos del sitio y el promedio de comidas del sitio.</p>
-    <p class="text-muted small mb-0">
-        Costos (@cantidadCostosPromediados): <strong>@promedioCostos.ToString("C", usd)</strong> ·
-        Comidas (@cantidadComidasPromediadas): <strong>@promedioComidas.ToString("C", usd)</strong>
-    </p>
-</div>
-
-<!-- Costos y Tarifas -->
-<div class="page-card mb-4">
-    <h5 class="fw-bold mb-3">💰 Costos y Tarifas</h5>
     @if (costos.Any())
     {
         <div class="table-responsive">
@@ -187,6 +254,7 @@
                         <th>Tipo</th>
                         <th>Valor</th>
                         <th>Moneda</th>
+                        <th>Observacion</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -194,8 +262,9 @@
                     {
                         <tr>
                             <td class="fw-semibold">@costo.Tipo</td>
-                            <td>@costo.Valor</td>
-                            <td><span class="soft-badge">@costo.Moneda</span></td>
+                            <td>@(costo.Valor <= 0 ? "Gratis" : costo.Valor.ToString("C", usd))</td>
+                            <td><span class="soft-badge soft-badge-light">@costo.Moneda</span></td>
+                            <td>@(string.IsNullOrWhiteSpace(costo.Observacion) ? "Sin observacion" : costo.Observacion)</td>
                         </tr>
                     }
                 </tbody>
@@ -208,100 +277,167 @@
     }
 </div>
 
+<div class="page-card mb-4" id="mapaSitio">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
+        <div>
+            <h5 class="fw-bold mb-1">Mapa interactivo</h5>
+            <p class="text-muted mb-0">Ubicacion referencial del destino basada en coordenadas registradas.</p>
+        </div>
+
+        @if (tieneCoordenadas)
+        {
+            <span class="soft-badge soft-badge-light">Leaflet + OpenStreetMap</span>
+        }
+    </div>
+
+    @if (tieneCoordenadas)
+    {
+        <div id="publicSiteMap" class="route-map" data-lat="@latitudRuta" data-lon="@longitudRuta"></div>
+    }
+    else
+    {
+        <div class="empty-state">Este sitio todavia no tiene coordenadas registradas para mostrar el mapa.</div>
+    }
+</div>
+
+<div class="page-card">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+        <div>
+            <h5 class="fw-bold mb-1">Ficha curada</h5>
+            <p class="text-muted mb-0">Contenido enriquecido con imagenes, ubicacion jerarquica y precios referenciales.</p>
+        </div>
+        <div class="text-muted small">Fecha de creacion del registro: @Model.FechaCreacion.ToString("dd/MM/yyyy")</div>
+    </div>
+</div>
+
 <style>
-.page-card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 250, 255, 0.95) 100%);
-    border: 1px solid rgba(59, 130, 246, 0.2);
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+.detail-hero {
+    background: linear-gradient(135deg, rgba(255, 253, 248, 0.98) 0%, rgba(224, 243, 235, 0.98) 100%);
 }
 
-.section-title {
-    color: #1f2937;
+.soft-badge-light {
+    background: #fff1d6;
+    color: #8a4d12;
+}
+
+.eyebrow {
+    display: inline-block;
+    color: #64748b;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.activity-badge {
+    background: #dff3eb;
+    color: #0a5f50;
+}
+
+.detail-summary {
+    width: min(100%, 240px);
+    display: grid;
+    gap: 0.85rem;
+}
+
+.summary-tile {
+    padding: 1rem 1.1rem;
+    border-radius: 0.9rem;
+    background: #fffaf0;
+    border: 1px solid rgba(226, 166, 75, 0.24);
+}
+
+.summary-value {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.summary-label {
+    color: #64748b;
+    font-size: 0.92rem;
+}
+
+.detail-list {
+    display: grid;
+    gap: 0.9rem;
+}
+
+.detail-item {
+    display: grid;
+    gap: 0.2rem;
+}
+
+.detail-label {
+    color: #64748b;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.detail-value {
+    color: #0f172a;
+    line-height: 1.5;
+}
+
+.price-callout {
+    height: 100%;
+    border-radius: 0.9rem;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, #e4f4ed 0%, #fffaf0 100%);
+    border: 1px solid rgba(15, 139, 111, 0.16);
+}
+
+.price-value {
     font-size: 2rem;
     font-weight: 700;
+    color: #0a5f50;
+    margin: 0.35rem 0 0.5rem;
 }
 
-.page-muted {
-    color: #6b7280;
-    font-size: 1rem;
-}
-
-.soft-badge {
-    display: inline-block;
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.table-friendly {
-    border-collapse: collapse;
-}
-
-.table-friendly thead {
-    background-color: #f3f4f6;
-}
-
-.table-friendly tbody tr:hover {
-    background-color: #f9fafb;
-}
-
-.empty-state {
-    text-align: center;
-    padding: 2rem;
-    color: #9ca3af;
-    background-color: #f9fafb;
-    border-radius: 8px;
-}
-
-.gallery-card {
+.gallery-card,
+.food-card {
     overflow: hidden;
-    border-radius: 12px;
-    border: 1px solid rgba(59, 130, 246, 0.15);
-    background: #fff;
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+    border-radius: 0.9rem;
+    border: 1px solid rgba(15, 139, 111, 0.14);
+    background: #fffdf8;
+    box-shadow: 0 12px 26px rgba(51, 61, 45, 0.08);
 }
 
 .gallery-image {
     width: 100%;
-    height: 240px;
+    height: 250px;
     object-fit: cover;
     display: block;
 }
 
-.food-card {
-    overflow: hidden;
-    border-radius: 12px;
-    border: 1px solid rgba(59, 130, 246, 0.15);
-    background: #fff;
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
-}
-
 .food-image {
     width: 100%;
-    height: 180px;
+    height: 190px;
     object-fit: cover;
     display: block;
 }
 
 .food-placeholder {
-    height: 180px;
+    height: 190px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
-    color: #2563eb;
+    background: linear-gradient(135deg, #dff3eb 0%, #fff4dc 100%);
+    color: #0a5f50;
     font-weight: 600;
 }
 
-.food-title {
-    padding: 0.85rem 1rem;
-    font-weight: 600;
-    color: #1f2937;
+.food-body {
+    padding: 1rem;
+}
+
+.food-note {
+    color: #64748b;
+    font-size: 0.88rem;
+    line-height: 1.45;
 }
 </style>
 
@@ -322,7 +458,7 @@
                 return;
             }
 
-            var map = L.map('publicSiteMap', { scrollWheelZoom: false }).setView([latitud, longitud], 15);
+            var map = L.map('publicSiteMap', { scrollWheelZoom: false }).setView([latitud, longitud], 14);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '&copy; OpenStreetMap contributors'

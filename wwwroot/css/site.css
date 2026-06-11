@@ -11,32 +11,53 @@ html {
 }
 
 :root {
-  --app-bg: #f6f8fc;
+  --app-bg: #f5f1e8;
   --app-surface: #ffffff;
-  --app-surface-soft: #f8fafc;
-  --app-border: #e5e7eb;
-  --app-text: #1f2937;
-  --app-muted: #6b7280;
-  --app-primary: #2563eb;
-  --app-primary-dark: #1d4ed8;
-  --app-success: #059669;
+  --app-surface-soft: #fffaf0;
+  --app-border: #e8ddc8;
+  --app-text: #243326;
+  --app-muted: #6d7668;
+  --app-primary: #0f8b6f;
+  --app-primary-dark: #0a5f50;
+  --app-primary-soft: #dff3eb;
+  --app-accent: #e2a64b;
+  --app-accent-dark: #a86217;
+  --app-success: #2f8f46;
 }
 
 body {
   margin-bottom: 0;
-  background: linear-gradient(180deg, #eef4ff 0%, var(--app-bg) 35%, #ffffff 100%);
+  background:
+    radial-gradient(circle at top left, rgba(226, 166, 75, 0.18), transparent 32rem),
+    radial-gradient(circle at top right, rgba(15, 139, 111, 0.18), transparent 30rem),
+    linear-gradient(180deg, #fbf7ef 0%, var(--app-bg) 52%, #f9fbf6 100%);
   color: var(--app-text);
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
 }
 
 .app-navbar {
-  background: rgba(255, 255, 255, 0.88) !important;
-  backdrop-filter: blur(16px);
+  background: rgba(255, 250, 240, 0.9) !important;
+  backdrop-filter: blur(18px);
+  border-bottom-color: rgba(15, 95, 80, 0.16) !important;
 }
 
 .app-brand {
-  font-weight: 700;
-  letter-spacing: 0.2px;
+  color: var(--app-primary-dark) !important;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.nav-link {
+  border-radius: 999px;
+  font-weight: 650;
+  padding-left: 0.9rem !important;
+  padding-right: 0.9rem !important;
+}
+
+.nav-link:hover {
+  background: var(--app-primary-soft);
+  color: var(--app-primary-dark) !important;
 }
 
 .app-main {
@@ -51,8 +72,8 @@ body {
 .table-card {
   background: var(--app-surface);
   border: 1px solid var(--app-border);
-  border-radius: 1.25rem;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  border-radius: 1rem;
+  box-shadow: 0 18px 42px rgba(51, 61, 45, 0.09);
 }
 
 table.table {
@@ -68,7 +89,7 @@ table.table > :not(caption) > * > * {
 }
 
 table.table-striped > tbody > tr:nth-of-type(odd) > * {
-  --bs-table-accent-bg: #f8fbff;
+  --bs-table-accent-bg: #fffaf0;
 }
 
 table.table-responsive {
@@ -76,9 +97,29 @@ table.table-responsive {
 }
 
 .page-hero {
-  padding: 2rem;
-  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 48%, #38bdf8 100%);
+  position: relative;
+  overflow: hidden;
+  padding: 3rem;
+  background:
+    linear-gradient(115deg, rgba(10, 70, 58, 0.92) 0%, rgba(15, 139, 111, 0.82) 46%, rgba(226, 166, 75, 0.58) 100%),
+    url("/uploads/sitios/5/peguche-entrada.jpg") center / cover;
   color: white;
+}
+
+.page-hero::after {
+  content: "";
+  position: absolute;
+  right: -5rem;
+  bottom: -7rem;
+  width: 22rem;
+  height: 22rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.page-hero > * {
+  position: relative;
+  z-index: 1;
 }
 
 .page-hero .text-muted,
@@ -95,16 +136,18 @@ table.table-responsive {
 .feature-card {
   padding: 1.25rem;
   height: 100%;
+  background: #fffaf0;
+  border-color: rgba(226, 166, 75, 0.28);
 }
 
 .feature-icon {
   width: 3rem;
   height: 3rem;
-  border-radius: 0.9rem;
+  border-radius: 0.85rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #dbeafe;
+  background: var(--app-primary-soft);
   color: var(--app-primary-dark);
   font-size: 1.25rem;
   margin-bottom: 0.9rem;
@@ -120,7 +163,7 @@ table.table-responsive {
 }
 
 .table-friendly tbody tr:hover {
-  background: #f8fbff;
+  background: #f0faf5;
 }
 
 .table-friendly td,
@@ -142,7 +185,7 @@ table.table-responsive {
 .form-control:focus,
 .form-select:focus {
   border-color: var(--app-primary);
-  box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.12);
+  box-shadow: 0 0 0 0.2rem rgba(15, 139, 111, 0.14);
 }
 
 .btn {
@@ -154,10 +197,23 @@ table.table-responsive {
 .btn-primary {
   background: linear-gradient(135deg, var(--app-primary) 0%, var(--app-primary-dark) 100%);
   border: none;
+  box-shadow: 0 8px 18px rgba(15, 139, 111, 0.22);
 }
 
 .btn-primary:hover {
-  filter: brightness(0.98);
+  filter: brightness(1.04);
+  transform: translateY(-1px);
+}
+
+.btn-outline-primary {
+  border-color: var(--app-primary);
+  color: var(--app-primary-dark);
+}
+
+.btn-outline-primary:hover {
+  background: var(--app-primary);
+  border-color: var(--app-primary);
+  color: #fff;
 }
 
 .soft-badge {
@@ -166,15 +222,16 @@ table.table-responsive {
   gap: 0.35rem;
   padding: 0.4rem 0.75rem;
   border-radius: 999px;
-  background: #e0f2fe;
-  color: #0369a1;
+  background: var(--app-primary-soft);
+  color: var(--app-primary-dark);
   font-weight: 600;
   font-size: 0.875rem;
 }
 
 .section-title {
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  color: #183b31;
+  font-weight: 800;
+  letter-spacing: 0;
 }
 
 .page-muted {
@@ -183,7 +240,7 @@ table.table-responsive {
 
 .empty-state {
   border: 1px dashed var(--app-border);
-  border-radius: 1rem;
+  border-radius: 0.9rem;
   padding: 2rem;
   text-align: center;
   color: var(--app-muted);
@@ -191,20 +248,43 @@ table.table-responsive {
 }
 
 .footer-shell {
-  border-top: 1px solid rgba(229, 231, 235, 0.9);
-  background: rgba(255, 255, 255, 0.7);
+  border-top: 1px solid rgba(15, 95, 80, 0.16);
+  background: rgba(255, 250, 240, 0.8);
   backdrop-filter: blur(10px);
 }
 
 .route-map {
   width: 100%;
   min-height: 420px;
-  border-radius: 1rem;
+  border-radius: 0.9rem;
   overflow: hidden;
   border: 1px solid var(--app-border);
-  background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
+  background: linear-gradient(135deg, #e4f4ed 0%, #fffaf0 100%);
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem rgba(37, 99, 235, 0.25);
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem rgba(15, 139, 111, 0.25);
+}
+
+.page-card {
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.site-card:hover,
+.food-card:hover,
+.gallery-card:hover,
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 46px rgba(51, 61, 45, 0.14);
+  border-color: rgba(15, 139, 111, 0.24);
+}
+
+@media (max-width: 767.98px) {
+  .page-hero {
+    padding: 2rem 1.25rem;
+  }
+
+  .display-5 {
+    font-size: 2rem;
+  }
 }

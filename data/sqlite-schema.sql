@@ -1,0 +1,101 @@
+CREATE TABLE IF NOT EXISTS Ubicacion (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Nombre TEXT NOT NULL,
+    Tipo TEXT NOT NULL,
+    ParentId INTEGER,
+    Descripcion TEXT,
+    Latitud REAL,
+    Longitud REAL,
+    FOREIGN KEY (ParentId) REFERENCES Ubicacion(Id)
+);
+
+CREATE TABLE IF NOT EXISTS Sitio (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Nombre TEXT NOT NULL,
+    Descripcion TEXT,
+    Actividades TEXT,
+    UbicacionId INTEGER NOT NULL,
+    Estado TEXT NOT NULL,
+    FechaCreacion TEXT NOT NULL,
+    FOREIGN KEY (UbicacionId) REFERENCES Ubicacion(Id)
+);
+
+CREATE TABLE IF NOT EXISTS Costo (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    SitioId INTEGER NOT NULL,
+    Tipo TEXT NOT NULL,
+    Valor REAL NOT NULL,
+    Moneda TEXT NOT NULL,
+    Observacion TEXT,
+    FOREIGN KEY (SitioId) REFERENCES Sitio(Id)
+);
+
+CREATE TABLE IF NOT EXISTS Comida (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Nombre TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS SitioComida (
+    SitioId INTEGER NOT NULL,
+    ComidaId INTEGER NOT NULL,
+    ValorReferencial REAL,
+    Observacion TEXT,
+    PRIMARY KEY (SitioId, ComidaId),
+    FOREIGN KEY (SitioId) REFERENCES Sitio(Id),
+    FOREIGN KEY (ComidaId) REFERENCES Comida(Id)
+);
+
+CREATE TABLE IF NOT EXISTS Usuarios (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Nombre TEXT NOT NULL,
+    Email TEXT NOT NULL,
+    PasswordHash TEXT NOT NULL,
+    Activo INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Rol (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Nombre TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS UsuarioRol (
+    UsuarioId INTEGER NOT NULL,
+    RolId INTEGER NOT NULL,
+    PRIMARY KEY (UsuarioId, RolId),
+    FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id),
+    FOREIGN KEY (RolId) REFERENCES Rol(Id)
+);
+
+CREATE TABLE IF NOT EXISTS Permiso (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Codigo TEXT NOT NULL,
+    Descripcion TEXT
+);
+
+CREATE TABLE IF NOT EXISTS RolPermiso (
+    RolId INTEGER NOT NULL,
+    PermisoId INTEGER NOT NULL,
+    PRIMARY KEY (RolId, PermisoId),
+    FOREIGN KEY (RolId) REFERENCES Rol(Id),
+    FOREIGN KEY (PermisoId) REFERENCES Permiso(Id)
+);
+
+CREATE TABLE IF NOT EXISTS Multimedia (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    SitioId INTEGER NOT NULL,
+    Url TEXT NOT NULL,
+    Tipo TEXT NOT NULL,
+    Orden INTEGER NOT NULL,
+    FOREIGN KEY (SitioId) REFERENCES Sitio(Id)
+);
+
+CREATE TABLE IF NOT EXISTS Auditoria (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    UsuarioId INTEGER NOT NULL,
+    Entidad TEXT NOT NULL,
+    EntidadId INTEGER NOT NULL,
+    Accion TEXT NOT NULL,
+    Fecha TEXT NOT NULL,
+    Datos TEXT NOT NULL,
+    FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id)
+);

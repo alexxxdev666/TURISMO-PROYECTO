@@ -15,6 +15,7 @@ CREATE TABLE Sitio (
     Id AUTOINCREMENT PRIMARY KEY,
     Nombre TEXT(150) NOT NULL,
     Descripcion LONGTEXT,
+    Actividades LONGTEXT,
     UbicacionId LONG NOT NULL,
     Estado TEXT(30) NOT NULL,
     FechaCreacion DATETIME NOT NULL,

@@ -13,6 +13,8 @@
         <dd class="col-sm-9">@Model.Nombre</dd>
         <dt class="col-sm-3">Descripción</dt>
         <dd class="col-sm-9">@(string.IsNullOrWhiteSpace(Model.Descripcion) ? "Sin descripción" : Model.Descripcion)</dd>
+        <dt class="col-sm-3">Actividades</dt>
+        <dd class="col-sm-9">@(string.IsNullOrWhiteSpace(Model.Actividades) ? "Sin actividades registradas" : Model.Actividades)</dd>
         <dt class="col-sm-3">Ubicación Id</dt>
         <dd class="col-sm-9">@Model.UbicacionId</dd>
         <dt class="col-sm-3">Estado</dt>
